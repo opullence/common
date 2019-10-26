@@ -1,0 +1,6 @@
+kombu==4.6.5
+PyYAML==5.1.2
+celery==4.3.0
+uuid==1.30
+mongoengine==0.18.2
+bson==0.5.8
