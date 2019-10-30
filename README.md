@@ -4,10 +4,9 @@
 
 ## Playing with jsonEncoder
 
-### With internal API
+### Serialize a fact With internal API
 
 ```python
-
 >>> from opulence.common.bases import BaseFact
 >>>
 >>> jon = BaseFact()
@@ -16,7 +15,7 @@
 >>> new_jon = BaseFact.from_json(jayson)
 ```
 
-### With json
+### Serialize a fact with json module
 
 ```python
 >>> import json
@@ -29,6 +28,17 @@
 >>> json.loads(jayson, object_hook=decode)
 
 ```
+
+
+### Serialize a Field
+
+```python
+>>> from opulence.common.fields import StringField, IntegerField
+>>> un = IntegerField(value="43")
+>>> un_json = un.to_json()
+>>> deux = IntegerField.from_json(un_json)
+```
+
 
 ## Test is_fact_or_composite
 
