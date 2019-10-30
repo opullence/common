@@ -39,7 +39,7 @@ def configure_celery(config, **kwargs):
     app.conf.update(config)
     app.conf.update(
         {
-            "task_routes": ("common.utils.tasks.TaskRouter",),
+            "task_routes": ("opulence.common.celery.taskRouter.TaskRouter",),
             "accept_content": ["customEncoder"],
             "task_serializer": "customEncoder",
             "result_serializer": "customEncoder",
