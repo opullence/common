@@ -1,20 +1,16 @@
 import json
 from datetime import datetime
-from multiprocessing.managers import ListProxy
 from time import mktime
 
-from bson import ObjectId
-from mongoengine.queryset import QuerySet
+from .bases import BaseFact
+from .fields import BaseField
 
-
-class customEncoder(json.JSONEncoder):
+class encode(json.JSONEncoder):
     def default(self, obj):
-        if isinstance(obj, QuerySet):
-            return obj.to_json()
-        elif isinstance(obj, ListProxy):
-            return json.loads(obj)
-        elif isinstance(obj, ObjectId):
-            return str(obj)
+        if isinstance(obj, BaseFact):
+            return {"__type__": "__basefact__", "fact": obj.to_json()}
+        elif isinstance(obj, BaseField):
+            return {"__type__": "__basefield__", "field": obj.to_json()}
         elif isinstance(obj, datetime):
             return {"__type__": "__datetime__", "epoch": int(mktime(obj.timetuple()))}
         return json.JSONEncoder.default(self, obj)
@@ -22,13 +18,17 @@ class customEncoder(json.JSONEncoder):
 
 def decode(obj):
     if "__type__" in obj:
-        if obj["__type__"] == "__datetime__":
+        if obj["__type__"] == "__basefact__":
+            return BaseFact.from_json(obj["fact"])
+        elif obj["__type__"] == "__basefield__":
+            return BaseField.from_json(obj["field"])
+        elif obj["__type__"] == "__datetime__":
             return datetime.fromtimestamp(obj["epoch"])
     return obj
 
 
 def custom_dumps(obj):
-    return json.dumps(obj, cls=customEncoder)
+    return json.dumps(obj, cls=encode)
 
 
 def custom_loads(obj):

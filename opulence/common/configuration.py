@@ -7,10 +7,10 @@ from kombu.serialization import register
 from . import jsonEncoder
 
 register(
-    "mongoEncoder",
+    "customEncoder",
     jsonEncoder.custom_dumps,
     jsonEncoder.custom_loads,
-    content_type="application/x-mongoEncoder",
+    content_type="application/x-customEncoder",
     content_encoding="utf-8",
 )
 
@@ -40,9 +40,9 @@ def configure_celery(config, **kwargs):
     app.conf.update(
         {
             "task_routes": ("common.utils.tasks.TaskRouter",),
-            "accept_content": ["mongoEncoder"],
-            "task_serializer": "mongoEncoder",
-            "result_serializer": "mongoEncoder",
+            "accept_content": ["customEncoder"],
+            "task_serializer": "customEncoder",
+            "result_serializer": "customEncoder",
         }
     )
     return app
