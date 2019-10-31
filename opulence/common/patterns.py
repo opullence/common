@@ -3,29 +3,8 @@ import importlib
 
 from .utils import is_list
 
-class Composite:
-    def __init__(self, *args):
-        self._elements = []
-        for a in args:
-            if is_list(a):
-                self._elements.extend(a)
-            else:
-                self._elements.append(a)
 
-    def __add__(self, other):
-        return list(set(self.elements + other.elements))
-
-    @property
-    def elements(self):
-        return self._elements
-
-    def add(self, element):
-        self._elements.append(element)
-
-    def remove(self, element):
-        self._elements.remove(element)
-
-class JsonSerializable():
+class JsonSerializable:
     def to_json(self):
         obj_dict = {
             "__class__": self.__class__.__name__,
@@ -47,6 +26,28 @@ class JsonSerializable():
             obj = json_dict
         return obj
 
+
+class Composite(JsonSerializable):
+    def __init__(self, *args):
+        self._elements = []
+        for a in args:
+            if is_list(a):
+                self._elements.extend(a)
+            else:
+                self._elements.append(a)
+
+    def __add__(self, other):
+        return list(set(self.elements + other.elements))
+
+    @property
+    def elements(self):
+        return self._elements
+
+    def add(self, element):
+        self._elements.append(element)
+
+    def remove(self, element):
+        self._elements.remove(element)
 
 class SingletonMetaClass(type):
     _instances_ = {}

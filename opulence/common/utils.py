@@ -1,5 +1,7 @@
 import uuid
 
+def hex_to_uuid(hex):
+	return uuid.UUID(hex)
 
 def generate_uuid():
     return uuid.uuid4()

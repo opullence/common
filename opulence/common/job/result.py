@@ -1,10 +1,12 @@
 from .status import StatusCode
 
 from .utils import is_fact_or_composite, is_composite
-from ..utils import generate_uuid
+from ..utils import generate_uuid, hex_to_uuid
 from ..timer import Clock
+from ..patterns import JsonSerializable
 
-class Composable:
+
+class Composable(JsonSerializable):
     def __init__(self, data=None):
         self.data = data
 
@@ -23,15 +25,13 @@ class Composable:
             return self.data.elements
         return [self.data]
 
-
-class Result:
-    def __init__(self, input=None, output=None):
-        self.id = generate_uuid()
+class Result(JsonSerializable):
+    def __init__(self, input=None, output=None, status=StatusCode.undefined, identifier=None, **kwargs):
+        if identifier is None:
+            self.identifier = generate_uuid()
         self.input = input
         self.output = output
-
-        self.error = None
-        self.status = StatusCode.undefined
+        self.status = status
 
     @property
     def input(self):
@@ -55,7 +55,6 @@ class Result:
 
     @status.setter
     def status(self, status):
-        print(status)
         try:
             statusCode, error = status
         except TypeError:
@@ -70,3 +69,20 @@ class Result:
                 'code': StatusCode.code_to_label(statusCode),
                 'error': error
             }
+
+    def to_json(self):
+        obj_dict = super().to_json()
+
+        obj_dict.update({
+            "identifier": self.identifier.hex,
+            "input": self.input.get(),
+            "output": self.output.get()
+        })
+        return obj_dict
+
+    @staticmethod
+    def from_json(json_dict):
+        json_dict.update({
+            "identifier": hex_to_uuid(json_dict["identifier"])
+        })
+        return super(Result, Result).from_json(json_dict)
