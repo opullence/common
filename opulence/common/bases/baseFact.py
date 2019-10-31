@@ -1,11 +1,9 @@
-import importlib
-
 from ..plugins.basePlugin import BasePlugin
 from ..plugins.exceptions import PluginFormatError
 from ..fields import BaseField
+from ..patterns import JsonSerializable
 
-
-class BaseFact(BasePlugin):
+class BaseFact(BasePlugin, JsonSerializable):
 
     def __new__(cls, **kwargs):
         return super().__new__(cls)
@@ -61,23 +59,3 @@ class BaseFact(BasePlugin):
                            "mandatory": data.mandatory})
         data = {"fields": fields}
         return {**super().get_info(), **data}
-
-    def to_json(self):
-        obj_dict = {
-            "__class__": self.__class__.__name__,
-            "__module__": self.__module__
-        }
-        obj_dict.update(self.__dict__)
-        return obj_dict
-
-    @staticmethod
-    def from_json(json_dict):
-        if "__class__" in json_dict:
-            class_name = json_dict.pop("__class__")
-            module_name = json_dict.pop("__module__")
-            module = importlib.import_module(module_name)
-            _class = getattr(module, class_name)
-            obj = _class(**json_dict)
-        else:
-            obj = json_dict
-        return obj
