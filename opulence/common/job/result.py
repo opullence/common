@@ -74,6 +74,7 @@ class Result(JsonSerializable):
         obj_dict = super().to_json()
 
         obj_dict.update({
+            
             "identifier": self.identifier.hex,
             "input": self.input.get(),
             "output": self.output.get()

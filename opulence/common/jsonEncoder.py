@@ -2,7 +2,7 @@ import json
 from datetime import datetime
 from time import mktime
 
-from .bases import BaseFact
+from .bases.baseFact import BaseFact
 from .fields import BaseField
 
 class encode(json.JSONEncoder):
