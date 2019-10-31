@@ -68,7 +68,7 @@ False
 >>> tata = Composite(BaseFact(), BaseFact())
 >>> r = Result(input=toto, output=tata)
 >>> r.status = StatusCode.error, "Oopsy"
->>> r.status = 
+>>> r.status =
 >>> r.input.get()
 >>> r.output.get()
 >>> r.status = StatusCode.finished

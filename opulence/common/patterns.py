@@ -1,15 +1,11 @@
 import importlib
 
-
 from .utils import is_list
 
 
 class JsonSerializable:
     def to_json(self):
-        obj_dict = {
-            "__class__": self.__class__.__name__,
-            "__module__": self.__module__
-        }
+        obj_dict = {"__class__": self.__class__.__name__, "__module__": self.__module__}
         obj_dict.update(self.__dict__)
         return obj_dict
 
@@ -18,7 +14,7 @@ class JsonSerializable:
         if "__class__" in json_dict:
             class_name = json_dict.pop("__class__")
             module_name = json_dict.pop("__module__")
-            
+
             module = importlib.import_module(module_name)
             _class = getattr(module, class_name)
             obj = _class(**json_dict)
@@ -48,6 +44,7 @@ class Composite(JsonSerializable):
 
     def remove(self, element):
         self._elements.remove(element)
+
 
 class SingletonMetaClass(type):
     _instances_ = {}

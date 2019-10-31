@@ -1,10 +1,9 @@
-from ..plugins.basePlugin import BasePlugin
-from ..plugins.exceptions import PluginFormatError
 from ..fields import BaseField
 from ..patterns import JsonSerializable
+from ..plugins.basePlugin import BasePlugin
+
 
 class BaseFact(BasePlugin, JsonSerializable):
-
     def __new__(cls, **kwargs):
         return super().__new__(cls)
 
@@ -24,13 +23,12 @@ class BaseFact(BasePlugin, JsonSerializable):
         return val
 
     def __eq__(self, other):
-        zip_fields = [[self.__dict__[s], other.__dict__[o]]
-                      for s, o in zip(self.__dict__, other.__dict__)]
-        toto = all(
-            [False if s.value != o.value else True for s, o in zip_fields])
-        return (
-            self.__class__ == other.__class__ and
-            all([False if s.value != o.value else True for s, o in zip_fields])
+        zip_fields = [
+            [self.__dict__[s], other.__dict__[o]]
+            for s, o in zip(self.__dict__, other.__dict__)
+        ]
+        return self.__class__ == other.__class__ and all(
+            [False if s.value != o.value else True for s, o in zip_fields]
         )
 
     def setup(self):
@@ -48,13 +46,14 @@ class BaseFact(BasePlugin, JsonSerializable):
 
     def get_fields(self):
         return {
-            field: self.__dict__[field] for field in self.__dict__ if isinstance(
-                self.__dict__[field], BaseField)}
+            field: self.__dict__[field]
+            for field in self.__dict__
+            if isinstance(self.__dict__[field], BaseField)
+        }
 
     def get_info(self):
         fields = []
         for key, data in self.get_fields().items():
-            fields.append({"name": key,
-                           "mandatory": data.mandatory})
+            fields.append({"name": key, "mandatory": data.mandatory})
         data = {"fields": fields}
         return {**super().get_info(), **data}

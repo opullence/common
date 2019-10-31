@@ -1,9 +1,8 @@
-from .status import StatusCode
-
-from .utils import is_fact_or_composite, is_composite
-from ..utils import generate_uuid, hex_to_uuid
-from ..timer import Clock
 from ..patterns import JsonSerializable
+# from ..timer import Clock
+from ..utils import generate_uuid, hex_to_uuid
+from .status import StatusCode
+from .utils import is_composite, is_fact_or_composite
 
 
 class Composable(JsonSerializable):
@@ -20,13 +19,22 @@ class Composable(JsonSerializable):
             self._data = data
         else:
             self._data = None
+
     def get(self):
         if is_composite(self.data):
             return self.data.elements
         return [self.data]
 
+
 class Result(JsonSerializable):
-    def __init__(self, input=None, output=None, status=StatusCode.undefined, identifier=None, **kwargs):
+    def __init__(
+        self,
+        input=None,
+        output=None,
+        status=StatusCode.undefined,
+        identifier=None,
+        **kwargs
+    ):
         if identifier is None:
             self.identifier = generate_uuid()
         else:
@@ -61,31 +69,30 @@ class Result(JsonSerializable):
             statusCode, error = status
         except TypeError:
             self._status = {
-                'status': status,
-                'code': StatusCode.code_to_label(status),
-                'error': None
+                "status": status,
+                "code": StatusCode.code_to_label(status),
+                "error": None,
             }
         else:
             self._status = {
-                'status': statusCode,
-                'code': StatusCode.code_to_label(statusCode),
-                'error': error
+                "status": statusCode,
+                "code": StatusCode.code_to_label(statusCode),
+                "error": error,
             }
 
     def to_json(self):
         obj_dict = super().to_json()
 
-        obj_dict.update({
-            
-            "identifier": self.identifier.hex,
-            "input": self.input.get(),
-            "output": self.output.get()
-        })
+        obj_dict.update(
+            {
+                "identifier": self.identifier.hex,
+                "input": self.input.get(),
+                "output": self.output.get(),
+            }
+        )
         return obj_dict
 
     @staticmethod
     def from_json(json_dict):
-        json_dict.update({
-            "identifier": hex_to_uuid(json_dict["identifier"])
-        })
+        json_dict.update({"identifier": hex_to_uuid(json_dict["identifier"])})
         return super(Result, Result).from_json(json_dict)

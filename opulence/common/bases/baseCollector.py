@@ -1,10 +1,9 @@
-from .baseFact import BaseFact
-
 from ..job import Result, StatusCode
-from ..plugins import BasePlugin
-from ..utils import is_list
 from ..patterns import Composite
+from ..plugins import BasePlugin
 from ..plugins.exceptions import PluginFormatError
+from ..utils import is_list
+from .baseFact import BaseFact
 
 
 class BaseCollector(BasePlugin):
@@ -12,9 +11,10 @@ class BaseCollector(BasePlugin):
     _active_scanning_ = False
 
     def __init__(self, *args, **kwargs):
-        # if not self._allowed_input_:
-        #     raise PluginFormatError(
-        #         f"<{type(self).__name__}> needs at least one allowed_input")
+        if not self._allowed_input_:
+            raise PluginFormatError(
+                f"<{type(self).__name__}> needs at least one allowed_input"
+            )
         super().__init__()
 
     @property
@@ -55,7 +55,8 @@ class BaseCollector(BasePlugin):
 
     def launch(self, fact):
         raise NotImplementedError(
-            f"Method launch() should be defined for Plugin <{type(self).__name__}>")
+            f"Method launch() should be defined for Plugin <{type(self).__name__}>"
+        )
 
     def get_allowed_input_as_list(self):
         ret = []
@@ -67,6 +68,8 @@ class BaseCollector(BasePlugin):
         return ret
 
     def get_info(self):
-        data = {"active_scanning": self._active_scanning_,
-                "allowed_input": self.get_allowed_input_as_list(), }
+        data = {
+            "active_scanning": self._active_scanning_,
+            "allowed_input": self.get_allowed_input_as_list(),
+        }
         return {**super().get_info(), **data}

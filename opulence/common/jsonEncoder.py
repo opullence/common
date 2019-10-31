@@ -2,14 +2,15 @@ import json
 from datetime import datetime
 from time import mktime
 
-from .job import Result, Composable
 from .bases.baseFact import BaseFact
 from .fields import BaseField
+from .job import Composable, Result
+
 
 class encode(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, Result):
-            return {"__type__": "__result__", "result": obj.to_json()}        
+            return {"__type__": "__result__", "result": obj.to_json()}
         elif isinstance(obj, BaseFact):
             return {"__type__": "__basefact__", "fact": obj.to_json()}
         elif isinstance(obj, Composable):

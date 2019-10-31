@@ -8,15 +8,16 @@ class StatusCode:
     rate_limited = 110
     error = 1000
 
-    label = {undefined: "Undefined",
-             empty: "Empty",
-             ready: "Ready",
-             started: "Started",
-             finished: "Finished",
-             cancelled: "Cancelled",
-             rate_limited: "Rate limited",
-             error: "Error"
-             }
+    label = {
+        undefined: "Undefined",
+        empty: "Empty",
+        ready: "Ready",
+        started: "Started",
+        finished: "Finished",
+        cancelled: "Cancelled",
+        rate_limited: "Rate limited",
+        error: "Error",
+    }
 
     @staticmethod
     def is_errored(code):
