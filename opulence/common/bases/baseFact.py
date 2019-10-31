@@ -17,7 +17,6 @@ class BaseFact(BasePlugin, JsonSerializable):
 
     def __hash__(self):
         val = 0
-        print(self.__dict__)
         for f in self.__dict__:
             val += hash(self.__dict__[f].value)
         if val == 0:

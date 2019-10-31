@@ -7,7 +7,7 @@ from ..patterns import JsonSerializable
 
 
 class Composable(JsonSerializable):
-    def __init__(self, data=None):
+    def __init__(self, data=None, **kwargs):
         self.data = data
 
     @property
@@ -18,8 +18,8 @@ class Composable(JsonSerializable):
     def data(self, data):
         if is_fact_or_composite(data):
             self._data = data
-
-        
+        else:
+            self._data = None
     def get(self):
         if is_composite(self.data):
             return self.data.elements
@@ -29,6 +29,8 @@ class Result(JsonSerializable):
     def __init__(self, input=None, output=None, status=StatusCode.undefined, identifier=None, **kwargs):
         if identifier is None:
             self.identifier = generate_uuid()
+        else:
+            self.identifier = identifier
         self.input = input
         self.output = output
         self.status = status
