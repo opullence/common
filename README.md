@@ -2,7 +2,7 @@
 ...
 
 
-## Playing with jsonEncoder
+## Playing with the serializer
 
 ### Serialize a fact With internal API
 
@@ -55,4 +55,21 @@ True
 True
 >>> is_fact_or_composite(42)
 False
+```
+
+## Playing with Result and Composite
+
+```python
+>>> from opulence.common.job import Result, StatusCode
+>>> from opulence.common.bases import BaseFact
+>>> from opulence.common.patterns import Composite
+>>>
+>>> toto = BaseFact()
+>>> tata = Composite(BaseFact(), BaseFact())
+>>> r = Result(input=toto, output=tata)
+>>> r.status = StatusCode.error, "Oopsy"
+>>> r.status = 
+>>> r.input.get()
+>>> r.output.get()
+>>> r.status = StatusCode.finished
 ```
