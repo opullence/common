@@ -1,4 +1,4 @@
-from . import BaseFact
+from .baseFact import BaseFact
 
 from ..job import Result, StatusCode
 from ..plugins import BasePlugin
