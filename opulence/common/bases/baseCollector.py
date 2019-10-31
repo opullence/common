@@ -1,10 +1,9 @@
-from . import BaseFact
-
-# from common.job import Job, StatusCode
-from ..plugins import BasePlugin
-from ..utils import is_list
+from ..job import Result, StatusCode
 from ..patterns import Composite
+from ..plugins import BasePlugin
 from ..plugins.exceptions import PluginFormatError
+from ..utils import is_list
+from .baseFact import BaseFact
 
 
 class BaseCollector(BasePlugin):
@@ -14,7 +13,8 @@ class BaseCollector(BasePlugin):
     def __init__(self, *args, **kwargs):
         if not self._allowed_input_:
             raise PluginFormatError(
-                f"<{type(self).__name__}> needs at least one allowed_input")
+                f"<{type(self).__name__}> needs at least one allowed_input"
+            )
         super().__init__()
 
     @property
@@ -25,28 +25,27 @@ class BaseCollector(BasePlugin):
     def allowed_input(self):
         return self._allowed_input_
 
-    def run(self, job):
-        if not isinstance(job, Job):
-            raise TypeError(
-                f"Expected Job argument to run(), got {type(request)}")
-        if not job.input:
-            job.status = StatusCode.empty
-            return job
+    def run(self, facts):
+        result = Result(input=facts)
+
+        if result.input is None:
+            result.status = StatusCode.empty, "No input provided"
+            return result
         try:
-            job.executionClock.start()
-            job.status = StatusCode.started
+            # result.executionClock.start()
+            result.status = StatusCode.started
 
-            job.output = self._sanitize_output(self.launch(job.input))
-            job.executionClock.stop()
+            result.output = self.launch(result.input.get())
+            # result.executionClock.stop()
+            result.status = StatusCode.finished
 
-            job.status = StatusCode.finished
         except Exception as err:
-            job.status = StatusCode.error
-            job.error = str(err)
+            result.status = StatusCode.error, str(err)
             print("!!!!!!!!!!!!")
             print("Error in run():", err)
             print("!!!!!!!!!!!!")
-        return job
+        finally:
+            return result
 
     @staticmethod
     def _sanitize_output(output):
@@ -56,7 +55,8 @@ class BaseCollector(BasePlugin):
 
     def launch(self, fact):
         raise NotImplementedError(
-            f"Method launch() should be defined for Plugin <{type(self).__name__}>")
+            f"Method launch() should be defined for Plugin <{type(self).__name__}>"
+        )
 
     def get_allowed_input_as_list(self):
         ret = []
@@ -68,6 +68,8 @@ class BaseCollector(BasePlugin):
         return ret
 
     def get_info(self):
-        data = {"active_scanning": self._active_scanning_,
-                "allowed_input": self.get_allowed_input_as_list(), }
+        data = {
+            "active_scanning": self._active_scanning_,
+            "allowed_input": self.get_allowed_input_as_list(),
+        }
         return {**super().get_info(), **data}

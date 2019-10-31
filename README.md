@@ -2,12 +2,11 @@
 ...
 
 
-## Playing with jsonEncoder
+## Playing with the serializer
 
-### With internal API
+### Serialize a fact With internal API
 
 ```python
-
 >>> from opulence.common.bases import BaseFact
 >>>
 >>> jon = BaseFact()
@@ -16,7 +15,7 @@
 >>> new_jon = BaseFact.from_json(jayson)
 ```
 
-### With json
+### Serialize a fact with json module
 
 ```python
 >>> import json
@@ -28,4 +27,49 @@
 >>> jayson = json.dumps(jon, cls=encode)
 >>> json.loads(jayson, object_hook=decode)
 
+```
+
+
+### Serialize a Field
+
+```python
+>>> from opulence.common.fields import StringField, IntegerField
+>>> un = IntegerField(value="43")
+>>> un_json = un.to_json()
+>>> deux = IntegerField.from_json(un_json)
+```
+
+
+## Test is_fact_or_composite
+
+```python
+>>> from opulence.common.job.utils import is_fact_or_composite
+>>> from opulence.common.bases import BaseFact
+>>> from opulence.common.patterns import Composite
+>>>
+>>> b = BaseFact()
+>>> c = Composite()
+>>> is_fact_or_composite(b)
+True
+>>> is_fact_or_composite(c)
+True
+>>> is_fact_or_composite(42)
+False
+```
+
+## Playing with Result and Composite
+
+```python
+>>> from opulence.common.job import Result, StatusCode
+>>> from opulence.common.bases import BaseFact
+>>> from opulence.common.patterns import Composite
+>>>
+>>> toto = BaseFact()
+>>> tata = Composite(BaseFact(), BaseFact())
+>>> r = Result(input=toto, output=tata)
+>>> r.status = StatusCode.error, "Oopsy"
+>>> r.status =
+>>> r.input.get()
+>>> r.output.get()
+>>> r.status = StatusCode.finished
 ```
