@@ -25,9 +25,9 @@ class encode(json.JSONEncoder):
 def decode(obj):
     if "__type__" in obj:
         if obj["__type__"] == "__result__":
-            return BaseFact.from_json(obj["result"])
+            return Result.from_json(obj["result"])
         elif obj["__type__"] == "__composable__":
-            return BaseFact.from_json(obj["composable"])
+            return Composable.from_json(obj["composable"])
         elif obj["__type__"] == "__basefact__":
             return BaseFact.from_json(obj["fact"])
         elif obj["__type__"] == "__basefield__":

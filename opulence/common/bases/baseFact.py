@@ -11,7 +11,11 @@ class BaseFact(BasePlugin, JsonSerializable):
         self.setup()
         for key, value in kwargs.items():
             if key in self.__dict__:
-                self.__dict__[key].value = value
+                if isinstance(value, BaseField):
+                    self.__dict__[key] = value
+                else:
+                    self.__dict__[key].value = value
+
         super().__init__()
 
     def __hash__(self):
@@ -39,7 +43,8 @@ class BaseFact(BasePlugin, JsonSerializable):
         return BaseFact.__name__
 
     def is_valid(self):
-        # Note: if a field is `mandatory` and contains a `default` value, it will aways be considered valid
+        # Note: if a field is `mandatory` and contains a `default` value,
+        # it will aways be considered valid
         for _, f in self.get_fields().items():
             if f.mandatory and f.value is None:
                 return False
