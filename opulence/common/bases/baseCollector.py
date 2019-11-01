@@ -46,6 +46,7 @@ class BaseCollector(BasePlugin):
             print("Error in run():", err)
             print("!!!!!!!!!!!!")
         finally:
+            print("Run output:", result)
             return result
 
     @staticmethod
