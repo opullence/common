@@ -1,4 +1,5 @@
 import os
+import logging
 
 import yaml
 from celery import Celery
