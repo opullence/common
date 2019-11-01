@@ -35,6 +35,7 @@ class BaseCollector(BasePlugin):
             # result.executionClock.start()
             result.status = StatusCode.started
 
+            #result.output = self._sanitize_output(self.launch(result.input.get()))
             result.output = self.launch(result.input.get())
             # result.executionClock.stop()
             result.status = StatusCode.finished
@@ -51,7 +52,7 @@ class BaseCollector(BasePlugin):
     def _sanitize_output(output):
         if not is_list(output):
             output = [output]
-        return [o for o in output if isinstance(o, BaseFact) and o.is_valid()]
+        return [ o for o in output if isinstance(o, BaseFact) ] # and o.is_valid()]
 
     def launch(self, fact):
         raise NotImplementedError(

@@ -3,13 +3,14 @@ from ..patterns import JsonSerializable
 
 class BaseField(JsonSerializable):
     def __init__(self, value=None, default=None, mandatory=False, **kwargs):
-        self._default = default
+        self.default = default
         self._mandatory = mandatory
-        self._value = value
+        self._value = None
+        self.value = value
 
     def __repr__(self):
-        return "value: {}, default: {}, mandatory: {}".format(
-            self.value, self._default, self._mandatory
+        return "{}  -> value: {}, default: {}, mandatory: {}".format(
+            self.__class__.__name__, self.value, self._default, self._mandatory
         )
 
     def __hash__(self):
@@ -23,9 +24,47 @@ class BaseField(JsonSerializable):
         return self._mandatory
 
     @property
+    def default(self):
+        return self._default
+
+    @default.setter
+    def default(self, default):
+        if default is not None:
+            self._default = self.cast_value(default)
+        else:
+            self._default = None
+
+    @property
     def value(self):
-        return self._value
+        if self._value is not None:
+            return self._value
+        return self.default
 
     @value.setter
-    def value(self, v):
-        self._value = v
+    def value(self, value):
+        if value is not None:
+            self._value = self.cast_value(value)
+        else:
+            self._value = None
+
+    # def try_cast_value(self, value):
+    #     try:
+    #         val = self.cast_value(value)
+    #     except Exception as err:
+    #         val = None
+    #     finally:
+    #         return val
+
+    def cast_value(self, value):
+        return str(value)
+
+    def to_json(self):
+        obj_dict = super().to_json()
+        obj_dict.update(
+            {
+                "value": self.value,
+                "default": self.default,
+                "mandatory": self.mandatory,
+            }
+        )
+        return obj_dict
