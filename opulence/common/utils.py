@@ -1,7 +1,18 @@
 import uuid
+from datetime import datetime
+
+import dateutil.parser
 
 
-def hex_to_uuid(hex):
+def datetime_to_string(date: datetime):
+    return date.isoformat()
+
+
+def string_to_datetime(s: str):
+    return dateutil.parser.parse(s)
+
+
+def hex_to_uuid(hex: str):
     return uuid.UUID(hex)
 
 

@@ -1,16 +1,21 @@
 from datetime import datetime
 
+from .patterns import JsonSerializable
 
-class Clock:
-    def __init__(self):
-        self.start_date = None
-        self.end_date = None
+
+class Clock(JsonSerializable):
+    def __init__(self, start_date=None, end_date=None, started=False):
+        self.start_date = start_date
+        self.end_date = end_date
+        self.started = started
 
     def start(self):
         self.end_date = None
+        self.started = True
         self.start_date = datetime.now()
 
     def stop(self):
+        self.started = False
         self.end_date = datetime.now()
 
     @property

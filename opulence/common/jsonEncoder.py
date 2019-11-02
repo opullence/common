@@ -1,10 +1,10 @@
 import json
 from datetime import datetime
-from time import mktime
 
 from .bases.baseFact import BaseFact
 from .fields import BaseField
 from .job import Composable, Result
+from .utils import datetime_to_string, string_to_datetime
 
 
 class encode(json.JSONEncoder):
@@ -18,7 +18,7 @@ class encode(json.JSONEncoder):
         elif isinstance(obj, BaseField):
             return {"__type__": "__basefield__", "field": obj.to_json()}
         elif isinstance(obj, datetime):
-            return {"__type__": "__datetime__", "epoch": int(mktime(obj.timetuple()))}
+            return {"__type__": "__datetime__", "epoch": datetime_to_string(obj)}
         return json.JSONEncoder.default(self, obj)
 
 
@@ -33,7 +33,7 @@ def decode(obj):
         elif obj["__type__"] == "__basefield__":
             return BaseField.from_json(obj["field"])
         elif obj["__type__"] == "__datetime__":
-            return datetime.fromtimestamp(obj["epoch"])
+            return string_to_datetime(obj["epoch"])
     return obj
 
 

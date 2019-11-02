@@ -32,12 +32,12 @@ class BaseCollector(BasePlugin):
             result.status = StatusCode.empty, "No input provided"
             return result
         try:
-            # result.executionClock.start()
+            result.executionClock.start()
             result.status = StatusCode.started
 
             # result.output = self._sanitize_output(self.launch(result.input.get()))
             result.output = self.launch(result.input.get(force_array=True))
-            # result.executionClock.stop()
+            result.executionClock.stop()
             result.status = StatusCode.finished
 
         except Exception as err:
@@ -46,7 +46,6 @@ class BaseCollector(BasePlugin):
             print("Error in run():", err)
             print("!!!!!!!!!!!!")
         finally:
-            print("Run output:", result.output, result.output.get())
             return result
 
     @staticmethod

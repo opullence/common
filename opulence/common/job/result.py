@@ -1,5 +1,5 @@
 from ..patterns import JsonSerializable
-# from ..timer import Clock
+from ..timer import Clock
 from ..utils import generate_uuid, hex_to_uuid
 from .status import StatusCode
 from .utils import is_composite, is_fact_or_composite
@@ -33,12 +33,17 @@ class Result(JsonSerializable):
         output=None,
         status=StatusCode.undefined,
         identifier=None,
+        clock=None,
         **kwargs
     ):
         if identifier is None:
             self.identifier = generate_uuid()
         else:
             self.identifier = identifier
+        if clock is None:
+            self.clock = Clock()
+        else:
+            self.clock = clock
         self.input = input
         self.output = output
         self.status = status
@@ -87,6 +92,10 @@ class Result(JsonSerializable):
                 "identifier": self.identifier.hex,
                 "input": self.input.get(),
                 "output": self.output.get(),
+                "clock": {
+                    "start": self.clock.start_date or None,
+                    "end": self.clock.end_date or None,
+                },
                 "state": self.status,
             }
         )
@@ -97,6 +106,7 @@ class Result(JsonSerializable):
         json_dict.update(
             {
                 "identifier": hex_to_uuid(json_dict["identifier"]),
+                "clock": Clock(json_dict["clock"]["start"], json_dict["clock"]["end"]),
                 "status": [json_dict["state"]["status"], json_dict["state"]["error"]],
             }
         )
