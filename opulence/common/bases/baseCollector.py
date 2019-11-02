@@ -32,12 +32,12 @@ class BaseCollector(BasePlugin):
             result.status = StatusCode.empty, "No input provided"
             return result
         try:
-            result.executionClock.start()
+            result.clock.start()
             result.status = StatusCode.started
 
             # result.output = self._sanitize_output(self.launch(result.input.get()))
             result.output = self.launch(result.input.get(force_array=True))
-            result.executionClock.stop()
+            result.clock.stop()
             result.status = StatusCode.finished
 
         except Exception as err:
