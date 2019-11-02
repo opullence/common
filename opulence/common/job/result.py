@@ -20,7 +20,7 @@ class Composable(JsonSerializable):
         else:
             self._data = None
 
-    def get(self, force_array=True):
+    def get(self, force_array=False):
         if is_composite(self.data):
             return self.data.elements
         return [self.data] if force_array else self.data
@@ -85,8 +85,8 @@ class Result(JsonSerializable):
         obj_dict.update(
             {
                 "identifier": self.identifier.hex,
-                "input": self.input.get(force_array=False),
-                "output": self.output.get(force_array=False),
+                "input": self.input.get(),
+                "output": self.output.get(),
                 "state": self.status,
             }
         )

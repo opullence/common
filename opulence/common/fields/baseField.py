@@ -61,10 +61,6 @@ class BaseField(JsonSerializable):
     def to_json(self):
         obj_dict = super().to_json()
         obj_dict.update(
-            {
-                "value": self.value,
-                "default": self.default,
-                "mandatory": self.mandatory,
-            }
+            {"value": self.value, "default": self.default, "mandatory": self.mandatory}
         )
         return obj_dict

@@ -30,15 +30,19 @@ class TestJsonEncodeResult(unittest.TestCase):
         res_json = json.dumps(res, cls=encode)
         new_res = json.loads(res_json, object_hook=decode)
 
-        for a, b in zip(res.output.get(), new_res.output.get()):
+        for a, b in zip(
+            res.output.get(force_array=True), new_res.output.get(force_array=True)
+        ):
             self.assertEqual(a, b)
-        for a, b in zip(res.input.get(), new_res.input.get()):
+        for a, b in zip(
+            res.input.get(force_array=True), new_res.input.get(force_array=True)
+        ):
             self.assertEqual(a, b)
         self.assertEqual(res.status, new_res.status)
         self.assertEqual(res.identifier, new_res.identifier)
 
     def test_encode_invalid_result(self):
-        fact_a = F(a=42, b="b", c="c")        
+        fact_a = F(a=42, b="b", c="c")
         res = Result()
         res.input = fact_a
         res.status = 404, "Not found"
@@ -50,6 +54,7 @@ class TestJsonEncodeResult(unittest.TestCase):
         self.assertEqual(res.identifier, new_res.identifier)
         self.assertEqual(res.input.get(), new_res.input.get())
         self.assertEqual(res.output.get(), new_res.output.get())
+        self.assertIsNone(new_res.output.get())
 
 
 class TestJsonEncodeStringField(unittest.TestCase):

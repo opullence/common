@@ -1,6 +1,6 @@
 import unittest
 
-from opulence.common.fields import BaseField, StringField, IntegerField
+from opulence.common.fields import IntegerField, StringField
 
 
 class TestStringField(unittest.TestCase):
@@ -10,13 +10,11 @@ class TestStringField(unittest.TestCase):
         self.assertEqual(s.mandatory, False)
         self.assertEqual(s.default, None)
 
-
     def test_simple_stringfield(self):
         s = StringField("foo")
         self.assertEqual(s.value, "foo")
         self.assertEqual(s.mandatory, False)
         self.assertEqual(s.default, None)
-
 
     def test_full_stringfield(self):
         s = StringField("foo", mandatory=True, default="Bar")
@@ -30,13 +28,13 @@ class TestStringField(unittest.TestCase):
         self.assertEqual(s.mandatory, True)
         self.assertEqual(s.default, "12345")
 
+
 class TestIntegerField(unittest.TestCase):
     def test_empty_integerfield(self):
         s = IntegerField()
         self.assertEqual(s.value, None)
         self.assertEqual(s.mandatory, False)
         self.assertEqual(s.default, None)
-
 
     def test_simple_integerfield(self):
         s = IntegerField(42)

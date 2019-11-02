@@ -38,11 +38,7 @@ class TestFactComparison(unittest.TestCase):
     def test_fact_not_equal(self):
         fact_a = A(a=42, b="bb", c="cc")
         fact_aa = A(a=24, b="bb", c="cc")
-
-        self.assertNotEqual(fact_a, fact_aa)
-
-    def test_fact_not_equal(self):
-        fact_a = A(a=42, b="bb", c="cc")
         fact_b = B(a=42, b="bb", c="cc")
 
+        self.assertNotEqual(fact_a, fact_aa)
         self.assertNotEqual(fact_a, fact_b)
