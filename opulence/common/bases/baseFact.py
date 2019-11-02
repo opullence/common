@@ -10,8 +10,13 @@ class BaseFact(BasePlugin, JsonSerializable):
     def __init__(self, **kwargs):
         self.setup()
         for key, value in kwargs.items():
+
             if key in self.__dict__:
-                self.__dict__[key].value = value
+                if isinstance(value, BaseField):
+                    self.__dict__[key] = value
+                else:
+                    self.__dict__[key].value = value
+
         super().__init__()
 
     def __hash__(self):
