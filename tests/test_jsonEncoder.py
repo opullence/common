@@ -25,7 +25,7 @@ class TestJsonEncodeResult(unittest.TestCase):
         fact_b = F(a=84, b="bbbb", c="cccc")
 
         res = Result(input=fact_a, output=fact_b)
-        res.status = 42, "404 not found"
+        res.status = 42
 
         res_json = json.dumps(res, cls=encode)
         new_res = json.loads(res_json, object_hook=decode)
@@ -35,6 +35,21 @@ class TestJsonEncodeResult(unittest.TestCase):
         for a, b in zip(res.input.get(), new_res.input.get()):
             self.assertEqual(a, b)
         self.assertEqual(res.status, new_res.status)
+        self.assertEqual(res.identifier, new_res.identifier)
+
+    def test_encode_invalid_result(self):
+        fact_a = F(a=42, b="b", c="c")        
+        res = Result()
+        res.input = fact_a
+        res.status = 404, "Not found"
+        res.output = "Whynot"
+
+        res_json = json.dumps(res, cls=encode)
+        new_res = json.loads(res_json, object_hook=decode)
+
+        self.assertEqual(res.identifier, new_res.identifier)
+        self.assertEqual(res.input.get(), new_res.input.get())
+        self.assertEqual(res.output.get(), new_res.output.get())
 
 
 class TestJsonEncodeStringField(unittest.TestCase):

@@ -15,11 +15,10 @@ class Composable(JsonSerializable):
 
     @data.setter
     def data(self, data):
-        self._data = data
-        # if is_fact_or_composite(data):
-        #     self._data = data
-        # else:
-        #     self._data = None
+        if is_fact_or_composite(data):
+            self._data = data
+        else:
+            self._data = None
 
     def get(self, force_array=True):
         if is_composite(self.data):
@@ -74,13 +73,6 @@ class Result(JsonSerializable):
                 "code": StatusCode.code_to_label(status),
                 "error": None,
             }
-        except ValueError:
-            self._status = {
-                "status": status,
-                "code": StatusCode.code_to_label(status),
-                "error": None,
-            }
-
         else:
             self._status = {
                 "status": statusCode,
