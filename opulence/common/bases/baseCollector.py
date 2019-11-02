@@ -36,7 +36,7 @@ class BaseCollector(BasePlugin):
             result.status = StatusCode.started
 
             # result.output = self._sanitize_output(self.launch(result.input.get()))
-            result.output = self.launch(result.input.get())
+            result.output = self.launch(result.input.get(force_array=True))
             # result.executionClock.stop()
             result.status = StatusCode.finished
 
