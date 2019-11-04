@@ -46,6 +46,10 @@ class Composite(JsonSerializable):
         self._elements.remove(element)
 
 
+def is_composite(obj):
+    return isinstance(obj, Composite)
+
+
 class SingletonMetaClass(type):
     _instances_ = {}
 

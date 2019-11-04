@@ -1,8 +1,8 @@
-from ..patterns import JsonSerializable
+from ..facts.utils import is_fact_or_composite
+from ..patterns import JsonSerializable, is_composite
 from ..timer import Clock
 from ..utils import generate_uuid, hex_to_uuid
 from .status import StatusCode
-from .utils import is_composite, is_fact_or_composite
 
 
 class Composable(JsonSerializable):

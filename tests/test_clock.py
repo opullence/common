@@ -9,3 +9,5 @@ class TestStringField(unittest.TestCase):
         self.assertFalse(c.started)
         c.start()
         self.assertTrue(c.started)
+        c.stop()
+        self.assertFalse(c.started)

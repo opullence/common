@@ -44,7 +44,9 @@ class BaseFact(BasePlugin, JsonSerializable):
         return BaseFact.__name__
 
     def is_valid(self):
-        # Note: if a field is `mandatory` and contains a `default` value, it will aways be considered valid
+        # Note: if a field is `mandatory` and contains a `default` value
+        # it will aways be considered valid
+
         for _, f in self.get_fields().items():
             if f.mandatory and f.value is None:
                 return False

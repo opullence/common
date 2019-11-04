@@ -1,9 +1,9 @@
 import json
 import unittest
 
-from opulence.common.bases.baseFact import BaseFact
+from opulence.common.facts import BaseFact
 from opulence.common.fields import IntegerField, StringField
-from opulence.common.job import Composable, Result
+from opulence.common.job import Result
 from opulence.common.jsonEncoder import decode, encode
 
 

@@ -1,7 +1,7 @@
 import json
 from datetime import datetime
 
-from .bases.baseFact import BaseFact
+from .facts import BaseFact
 from .fields import BaseField
 from .job import Composable, Result
 from .utils import datetime_to_str, str_to_datetime
