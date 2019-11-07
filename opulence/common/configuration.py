@@ -35,13 +35,14 @@ def load_config_from_file(file=None):
     except Exception as err:
         print("Error while trying to load configuration file", config_file, err)
 
+
 def configure_celery(config, **kwargs):
     app = Celery(__name__, **kwargs)
     app.conf.update(config)
     app.conf.update(
         {
             "task_routes": ("opulence.common.celery.taskRouter.TaskRouter",),
-            "accept_content": ["customEncoder"],
+            "accept_content": ["customEncoder", 'application/json'],
             "task_serializer": "customEncoder",
             "result_serializer": "customEncoder",
         }
