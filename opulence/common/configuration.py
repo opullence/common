@@ -20,16 +20,17 @@ register(
     content_encoding="utf-8",
 )
 
-
-try:
-    with open(CONFIG_FILENAME, "r") as stream:
-        config = yaml.safe_load(stream)
-except yaml.YAMLError as err:
-    print("Configuration format error:", err)
-except IOError:
-    pass
-except Exception as err:
-    print("Error while trying to load configuration file", err)
+def load_config_from_file(file=None):
+    config_file = file or CONFIG_FILENAME
+    try:
+        with open(config_file, "r") as stream:
+            config = yaml.safe_load(stream)
+    except yaml.YAMLError as err:
+        print("Configuration format error:", err)
+    except IOError:
+        pass
+    except Exception as err:
+        print("Error while trying to load configuration file", err)
 
 
 def configure_celery(config, **kwargs):
@@ -52,7 +53,7 @@ class RequireDebugTrue(logging.Filter):
 
 
 LOGFILE = os.path.join(os.getcwd(), "opulence.log")
-if "file" in config["log"]:
+if hasattr(config, "log") and "file" in config["log"]:
     LOGFILE = config["log"]["file"]
 
 
