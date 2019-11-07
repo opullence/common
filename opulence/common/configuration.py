@@ -8,9 +8,7 @@ from kombu.serialization import register
 
 from . import jsonEncoder
 
-CONFIG_FILENAME = os.getenv("CONFIG_FILE", "settings.yml")
-config = {}
-
+settings = {}
 
 register(
     "customEncoder",
@@ -20,18 +18,22 @@ register(
     content_encoding="utf-8",
 )
 
+def get_conf():
+    global settings
+    return settings
+
 def load_config_from_file(file=None):
-    config_file = file or CONFIG_FILENAME
+    global settings
+    config_file = file or os.getenv("CONFIG_FILE", "settings.yml")
     try:
         with open(config_file, "r") as stream:
-            config = yaml.safe_load(stream)
+            settings = yaml.safe_load(stream)
     except yaml.YAMLError as err:
         print("Configuration format error:", err)
     except IOError:
-        pass
+        print("IOERROR in load_config_from_file", config_file)
     except Exception as err:
-        print("Error while trying to load configuration file", err)
-
+        print("Error while trying to load configuration file", config_file, err)
 
 def configure_celery(config, **kwargs):
     app = Celery(__name__, **kwargs)
@@ -49,12 +51,12 @@ def configure_celery(config, **kwargs):
 
 class RequireDebugTrue(logging.Filter):
     def filter(self, record):
-        return config["log"]["debug"]
+        return settings["log"]["debug"]
 
 
 LOGFILE = os.path.join(os.getcwd(), "opulence.log")
-if hasattr(config, "log") and "file" in config["log"]:
-    LOGFILE = config["log"]["file"]
+if hasattr(settings, "log") and "file" in settings["log"]:
+    LOGFILE = settings["log"]["file"]
 
 
 DEFAULT_LOGGING = {
