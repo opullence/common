@@ -18,9 +18,11 @@ register(
     content_encoding="utf-8",
 )
 
+
 def get_conf():
     global settings
     return settings
+
 
 def load_config_from_file(file=None):
     global settings
@@ -66,7 +68,8 @@ DEFAULT_LOGGING = {
     "filters": {"require_debug_true": {"()": RequireDebugTrue}},
     "formatters": {
         "verbose": {
-            "format": "%(asctime)s %(levelname)s %(name)s %(thread)d %(threadName)s %(message)s"
+            "format": "%(asctime)s %(levelname)s %(name)s \
+            %(thread)d %(threadName)s %(message)s"
         },
         "simple": {"format": "%(levelname)s %(message)s"},
     },
