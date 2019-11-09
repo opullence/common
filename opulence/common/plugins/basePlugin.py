@@ -176,11 +176,11 @@ class PluginManager(Singleton):
             try:
                 dependency.verify()
             except DependencyMissing as err:
-                plugin.status = (PluginStatus.error, err)
+                plugin.status = (PluginStatus.ERROR, err)
         if hasattr(plugin, "verify"):
             try:
                 plugin.verify()
             except PluginVerifyError as err:
-                plugin.status = (PluginStatus.error, err)
+                plugin.status = (PluginStatus.ERROR, err)
         if plugin.plugin_canonical_name not in self._plugins_:
             self._plugins_[plugin.plugin_canonical_name] = plugin
