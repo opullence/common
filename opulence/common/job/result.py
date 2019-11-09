@@ -1,7 +1,7 @@
 from ..facts.utils import is_fact_or_composite
 from ..patterns import JsonSerializable, is_composite
 from ..timer import Clock
-from ..utils import generate_uuid, hex_to_uuid
+from ..utils import generate_uuid, hex_to_uuid, is_list
 from .status import StatusCode
 
 
@@ -64,7 +64,10 @@ class Result(JsonSerializable):
 
     @output.setter
     def output(self, output):
-        self._output = Composable(output)
+        if is_list(output):
+            self._output = output
+        else:
+            self._output = [output]
 
     @property
     def status(self):
@@ -94,7 +97,7 @@ class Result(JsonSerializable):
             {
                 "identifier": self.identifier.hex,
                 "input": self.input.get(),
-                "output": self.output.get(),
+                "output": self.output,
                 "clock": self.clock.to_json(),
             }
         )

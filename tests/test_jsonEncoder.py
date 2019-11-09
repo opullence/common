@@ -38,10 +38,9 @@ class TestJsonEncodeJob(unittest.TestCase):
         new_r = Result.from_json(r_json)
         self.assertEqual(r.identifier, new_r.identifier)
         self.assertEqual(r.input.get(), new_r.input.get())
-        self.assertEqual(r.output.get(), new_r.output.get())
-        self.assertEqual(
-            type(r.output.get().a.value), type(new_r.output.get().a.value), int
-        )
+        self.assertEqual(r.output, new_r.output)
+        for a, b in zip(r.output, new_r.output):
+            self.assertEqual(a, b)
         self.assertEqual(r.clock.start_date, new_r.clock.start_date)
         self.assertEqual(r.clock.end_date, new_r.clock.end_date)
 
@@ -54,10 +53,9 @@ class TestJsonEncodeJob(unittest.TestCase):
         new_r = Result.from_json(r_json)
         self.assertEqual(r.identifier, new_r.identifier)
         self.assertEqual(r.input.get(), new_r.input.get())
-        self.assertEqual(r.output.get(), new_r.output.get())
-        self.assertEqual(
-            type(r.output.get().a.value), type(new_r.output.get().a.value), int
-        )
+        self.assertEqual(r.output, new_r.output)
+        for a, b in zip(r.output, new_r.output):
+            self.assertEqual(a, b)
         self.assertEqual(r.clock.start_date, new_r.clock.start_date)
         self.assertEqual(r.clock.end_date, new_r.clock.end_date)
 
@@ -70,10 +68,9 @@ class TestJsonEncodeJob(unittest.TestCase):
         new_r = json.loads(r_json, object_hook=decode)
         self.assertEqual(r.identifier, new_r.identifier)
         self.assertEqual(r.input.get(), new_r.input.get())
-        self.assertEqual(r.output.get(), new_r.output.get())
-        self.assertEqual(
-            type(r.output.get().a.value), type(new_r.output.get().a.value), int
-        )
+        self.assertEqual(r.output, new_r.output)
+        for a, b in zip(r.output, new_r.output):
+            self.assertEqual(a, b)
         self.assertEqual(r.clock.start_date, new_r.clock.start_date)
         self.assertEqual(r.clock.end_date, new_r.clock.end_date)
 

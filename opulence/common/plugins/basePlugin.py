@@ -2,6 +2,7 @@ import inspect
 import os
 import pkgutil
 import sys
+from enum import Enum
 from importlib import import_module
 
 from ..patterns import Singleton
@@ -9,10 +10,13 @@ from ..utils import generate_uuid
 from .exceptions import DependencyMissing, NotInstanciable, PluginVerifyError
 
 
-class PluginStatus(object):
-    undefined = 0
-    ready = 10
-    error = 100
+class PluginStatus(Enum):
+    UNDEFINED = 0
+    READY = 10
+    ERROR = 100
+
+    def __ge__(self, other):
+        return self.value >= other.value
 
 
 class BasePlugin:
@@ -25,28 +29,28 @@ class BasePlugin:
 
     # internal use only
     _register_ = True
-    _status_ = (PluginStatus.ready, "")
+    _status_ = (PluginStatus.READY, "")
 
     def __init__(self):
         if not self._name_:
             self._name_ = "UNDEFINED-%s" % (generate_uuid())
             self.status = (
-                PluginStatus.error,
+                PluginStatus.ERROR,
                 "PluginFormatError: Incorrect plugin_name",
             )
         if not self._description_:
             self.status = (
-                PluginStatus.error,
+                PluginStatus.ERROR,
                 "PluginFormatError: Incorrect plugin_description",
             )
         if not self._author_:
             self.status = (
-                PluginStatus.error,
+                PluginStatus.ERROR,
                 "PluginFormatError: Incorrect plugin_author",
             )
         if not self._version_:
             self.status = (
-                PluginStatus.error,
+                PluginStatus.ERROR,
                 "PluginFormatError: Incorrect plugin_version",
             )
         if self._register_:
@@ -64,8 +68,8 @@ class BasePlugin:
     def status(self, code):
         try:
             code, error = code
-        except ValueError:
-            self._status_ = (PluginStatus.error, "Wrong status arguments.")
+        except TypeError:
+            self._status_ = (PluginStatus.ERROR, "Wrong status arguments.")
         else:
             err_text = "" if error is None else error
             full_error = (
@@ -101,7 +105,7 @@ class BasePlugin:
 
     @property
     def errored(self):
-        return self._status_[0] >= PluginStatus.error
+        return self.status[0] >= PluginStatus.ERROR
 
     def get_info(self):
         return {
@@ -120,6 +124,7 @@ class BasePlugin:
 
 class PluginManager(Singleton):
     _plugins_ = {}
+    print("GOOOOOOOOOOOOOO")
 
     def get_plugins(self, package=None, instance=True):
         if package:
