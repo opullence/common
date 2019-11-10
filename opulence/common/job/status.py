@@ -5,6 +5,7 @@ class StatusCode():
     started = 30
     finished = 40
     error = 100
+    invalid_input = 101
     cancelled = 200
     rate_limited = 300
 
@@ -15,6 +16,7 @@ class StatusCode():
         started: "Started",
         finished: "Finished",
         error: "Error",
+        invalid_input: "Invalid input",
         cancelled: "Cancelled",
         rate_limited: "Rate limited",
     }
