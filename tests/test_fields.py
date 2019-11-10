@@ -4,6 +4,18 @@ from opulence.common.fields import BaseField, StringField, IntegerField
 
 
 class TestStringField(unittest.TestCase):
+
+    def test_stringfield_repr(self):
+        a = StringField(default="a", mandatory=False)
+        self.assertEqual(str(a), "StringField  -> value: a, default: a, mandatory: False")
+
+    def test_stringfield_comparison(self):
+        a = StringField(default="a")
+        b = StringField(default="b", mandatory=False)
+        c = StringField(default="b", mandatory=True)
+        self.assertTrue(a != b)
+        self.assertTrue(b == c)
+
     def test_empty_stringfield(self):
         s = StringField()
         self.assertEqual(s.value, None)
@@ -55,9 +67,3 @@ class TestIntegerField(unittest.TestCase):
         self.assertEqual(s.value, 42)
         self.assertEqual(s.mandatory, True)
         self.assertEqual(s.default, 4242)
-
-    # def test_impossible_cast_integerfield(self):
-    #     s = IntegerField(value="john", mandatory=True, default="snow")
-    #     self.assertEqual(s.value, 42)
-    #     self.assertEqual(s.mandatory, True)
-    #     self.assertEqual(s.default, 4242)

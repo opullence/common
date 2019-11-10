@@ -125,7 +125,6 @@ class BasePlugin:
 class PluginManager(Singleton):
     _plugins_ = {}
 
-
     def get_plugins(self, package=None, instance=True):
         if package:
             instances = [

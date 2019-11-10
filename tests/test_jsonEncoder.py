@@ -4,7 +4,8 @@ import unittest
 from opulence.common.facts import BaseFact
 from opulence.common.fields import IntegerField, StringField
 from opulence.common.job import Result
-from opulence.common.jsonEncoder import decode, encode
+from opulence.common.jsonEncoder import decode, encode, custom_dumps, custom_loads
+
 from opulence.common.plugins import BasePlugin, PluginStatus
 
 
@@ -33,12 +34,23 @@ class FactB(BaseFact):
 
 
 class TestJsonEncodeJob(unittest.TestCase):
+    def test_encode_simple_json(self):
+        valid_json = {
+            "john": 42,
+            '42': "john"
+        }
+
+        to_json = custom_dumps(valid_json)
+        from_json = custom_loads(to_json)
+        
+        self.assertEqual(valid_json, from_json)
+
     def test_encode_PluginStatus(self):
         e = PluginStatus.ERROR
-
         e_json = json.dumps(e, cls=encode)
         new_e = json.loads(e_json, object_hook=decode)
         self.assertEqual(e, new_e)
+        self.assertEqual(new_e, PluginStatus.ERROR)
 
     def test_encode_simple_job(self):
         r = Result(input=FactA(), output=FactB())

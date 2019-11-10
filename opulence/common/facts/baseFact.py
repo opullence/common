@@ -21,8 +21,8 @@ class BaseFact(BasePlugin, JsonSerializable):
 
     def __hash__(self):
         val = 0
-        for f in self.__dict__:
-            val += hash(self.__dict__[f].value)
+        for f in self.get_fields():
+            val += hash(self.__dict__[f])
         if val == 0:
             return id(self)
         return val
@@ -62,6 +62,10 @@ class BaseFact(BasePlugin, JsonSerializable):
     def get_info(self):
         fields = []
         for key, data in self.get_fields().items():
-            fields.append({"name": key, "mandatory": data.mandatory})
+            fields.append({
+                "name": key,
+                "mandatory": data.mandatory,
+                "value": data.value
+            })
         data = {"fields": fields}
         return {**super().get_info(), **data}

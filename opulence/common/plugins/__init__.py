@@ -1,3 +1,3 @@
-from .basePlugin import BasePlugin, PluginManager, PluginStatus
+from .basePlugin import BasePlugin, PluginStatus, PluginManager
 
 __all__ = [BasePlugin, PluginManager, PluginStatus]
