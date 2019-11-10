@@ -1,12 +1,12 @@
-class StatusCode:
+class StatusCode():
     undefined = 0
     empty = 10
     ready = 20
     started = 30
     finished = 40
-    cancelled = 100
-    rate_limited = 110
-    error = 1000
+    error = 100
+    cancelled = 200
+    rate_limited = 300
 
     label = {
         undefined: "Undefined",
@@ -14,9 +14,9 @@ class StatusCode:
         ready: "Ready",
         started: "Started",
         finished: "Finished",
+        error: "Error",
         cancelled: "Cancelled",
         rate_limited: "Rate limited",
-        error: "Error",
     }
 
     @staticmethod

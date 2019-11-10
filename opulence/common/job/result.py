@@ -64,10 +64,7 @@ class Result(JsonSerializable):
 
     @output.setter
     def output(self, output):
-        if is_list(output):
-            self._output = output
-        else:
-            self._output = [output]
+        self._output = output if is_list(output) else [output]
 
     @property
     def status(self):
@@ -92,13 +89,13 @@ class Result(JsonSerializable):
 
     def to_json(self):
         obj_dict = super().to_json()
-
         obj_dict.update(
             {
                 "identifier": self.identifier.hex,
                 "input": self.input.get(),
                 "output": self.output,
                 "clock": self.clock.to_json(),
+                "status": (int(self.status["status"]), self.status["error"])
             }
         )
         return obj_dict
