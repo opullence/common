@@ -33,7 +33,7 @@ class Composite(JsonSerializable):
                 self._elements.append(a)
 
     def __add__(self, other):
-        return list(set(self.elements + other.elements))
+        return list(filter(None, (set(self.elements + other.elements))))
 
     @property
     def elements(self):
