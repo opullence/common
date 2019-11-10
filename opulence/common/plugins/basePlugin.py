@@ -2,7 +2,7 @@ import inspect
 import os
 import pkgutil
 import sys
-from enum import Enum
+from enum import IntEnum
 from importlib import import_module
 
 from ..patterns import Singleton
@@ -10,7 +10,7 @@ from ..utils import generate_uuid
 from .exceptions import DependencyMissing, NotInstanciable, PluginVerifyError
 
 
-class PluginStatus(Enum):
+class PluginStatus(IntEnum):
     UNDEFINED = 0
     READY = 10
     ERROR = 100
@@ -124,7 +124,7 @@ class BasePlugin:
 
 class PluginManager(Singleton):
     _plugins_ = {}
-    print("GOOOOOOOOOOOOOO")
+
 
     def get_plugins(self, package=None, instance=True):
         if package:
