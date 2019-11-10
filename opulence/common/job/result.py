@@ -23,7 +23,10 @@ class Composable(JsonSerializable):
     def get(self, force_array=False):
         if is_composite(self.data):
             return self.data.elements
-        return list(filter(None, self.data)) if force_array else self.data
+        if force_array:
+            return [] if not self.data else [self.data]
+        else:
+            return self.data
 
 class Result(JsonSerializable):
     def __init__(
