@@ -5,6 +5,7 @@ from opulence.common.facts import BaseFact
 from opulence.common.fields import IntegerField, StringField
 from opulence.common.job import Result
 from opulence.common.jsonEncoder import decode, encode
+from opulence.common.plugins import BasePlugin, PluginStatus
 
 
 class FactA(BaseFact):
@@ -32,6 +33,13 @@ class FactB(BaseFact):
 
 
 class TestJsonEncodeJob(unittest.TestCase):
+    def test_encode_PluginStatus(self):
+        e = PluginStatus.ERROR
+
+        e_json = json.dumps(e, cls=encode)
+        new_e = json.loads(e_json, object_hook=decode)
+        self.assertEqual(e, new_e)
+
     def test_encode_simple_job(self):
         r = Result(input=FactA(), output=FactB())
         r_json = r.to_json()

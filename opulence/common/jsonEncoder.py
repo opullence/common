@@ -5,7 +5,7 @@ from .facts import BaseFact
 from .fields import BaseField
 from .job import Composable, Result
 from .utils import datetime_to_str, str_to_datetime
-
+from .plugins import PluginStatus
 
 class encode(json.JSONEncoder):
     def default(self, obj):
@@ -19,6 +19,8 @@ class encode(json.JSONEncoder):
             return {"__type__": "__basefield__", "field": obj.to_json()}
         elif isinstance(obj, datetime):
             return {"__type__": "__datetime__", "epoch": datetime_to_str(obj)}
+        elif isinstance(obj, PluginStatus):
+            return {"__type__": "__pluginstatus__", "status": str(obj)}
         return json.JSONEncoder.default(self, obj)
 
 
@@ -34,6 +36,9 @@ def decode(obj):
             return BaseField.from_json(obj["field"])
         elif obj["__type__"] == "__datetime__":
             return str_to_datetime(obj["epoch"])
+        elif obj["__type__"] == "__pluginstatus__":
+            name, member = obj["status"].split(".")
+            return PluginStatus(getattr(PluginStatus[name], member))
     return obj
 
 
