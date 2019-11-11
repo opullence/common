@@ -8,7 +8,7 @@ class PluginFormatError(PluginError):
         super(PluginFormatError, self).__init__(value)
 
     def __str__(self):
-        return f"Plugin format error: ({self.value})"
+        return "Plugin format error: ({})".format(self.value)
 
 
 class PluginRuntimeError(PluginError):
@@ -16,7 +16,7 @@ class PluginRuntimeError(PluginError):
         super(PluginRuntimeError, self).__init__(value)
 
     def __str__(self):
-        return f"Plugin runtime error: ({self.value})"
+        return "Plugin runtime error: ({})".format(self.value)
 
 
 class PluginVerifyError(PluginError):
@@ -24,7 +24,7 @@ class PluginVerifyError(PluginError):
         super(PluginVerifyError, self).__init__(value)
 
     def __str__(self):
-        return f"Plugin additional verification failed: ({self.value})"
+        return "Plugin additional verification failed: ({})".format(self.value)
 
 
 class NotInstanciable(PluginError):
@@ -32,7 +32,7 @@ class NotInstanciable(PluginError):
         super(NotInstanciable, self).__init__()
 
     def __str__(self):
-        return f"Base class may not be instantiated"
+        return "Base class may not be instantiated"
 
 
 class DependencyMissing(PluginError):
@@ -41,8 +41,9 @@ class DependencyMissing(PluginError):
         self.dependency = None or dependency
 
     def __str__(self):
-        return f"Missing dependency ({type(self.dependency).__name__}): \
-                {self.dependency.dependency_name}"
+        return "Missing dependency ({}): {}".format(
+            type(self.dependency).__name__,
+            self.dependency.dependency_name)
 
 
 class ModuleDependencyMissing(DependencyMissing):
