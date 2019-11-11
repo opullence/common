@@ -28,6 +28,7 @@ class Composable(JsonSerializable):
         else:
             return self.data
 
+
 class Result(JsonSerializable):
     def __init__(
         self,

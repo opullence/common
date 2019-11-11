@@ -42,7 +42,7 @@ class DependencyMissing(PluginError):
 
     def __str__(self):
         return f"Missing dependency ({type(self.dependency).__name__}): \
-            {self.dependency.dependency_name}"
+                {self.dependency.dependency_name}"
 
 
 class ModuleDependencyMissing(DependencyMissing):

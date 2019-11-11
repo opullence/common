@@ -16,4 +16,3 @@ class TestPluginManager(unittest.TestCase):
         self.assertFalse(pm.get_plugins())
         basePlugin()
         self.assertTrue(pm.get_plugins())
-        self.assertTrue(pm.get_plugins(package="tests."))
