@@ -8,4 +8,4 @@ class TaskTimeoutError(TaskError):
         super(TaskError, self).__init__(value)
 
     def __str__(self):
-        return f"Task timeout: ({self.value})"
+        return "Task timeout: ({})".format(self.value)

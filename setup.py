@@ -8,7 +8,7 @@ with open("requirements/production.txt") as f:
 
 setup(
     name="opulence.common",
-    version="0.0.4",
+    version="0.0.5",
     description="Common tools",
     long_description=readme,
     author="Opulence",
@@ -17,5 +17,5 @@ setup(
     license=license,
     packages=find_namespace_packages(include=["opulence.*"]),
     install_requires=requirements,
-    python_requires=">=3.6.*, <4",
+    python_requires=">=3.5.*, <4",
 )
