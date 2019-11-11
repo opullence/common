@@ -73,7 +73,7 @@ class BasePlugin:
         else:
             err_text = "" if error is None else error
             full_error = (
-                f"{self._status_[1]}; {err_text}"
+                "{}; {}".format(self._status_[1], {err_text})
                 if self._status_[1] != ""
                 else err_text
             )
