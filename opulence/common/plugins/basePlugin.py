@@ -150,7 +150,7 @@ class PluginManager(Singleton):
         try:
             module = import_module(plugin)
         except ModuleNotFoundError as err:
-            print(f"Module not found ({err}): {plugin}")
+            print("Module not found ({}): {}".format(err, plugin))
         else:
             return module
 
