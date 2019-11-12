@@ -5,7 +5,7 @@ class PluginError(Exception):
 
 class PluginFormatError(PluginError):
     def __init__(self, value):
-        super(PluginFormatError, self).__init__(value)
+        super().__init__(value)
 
     def __str__(self):
         return "Plugin format error: ({})".format(self.value)
