@@ -159,7 +159,8 @@ class PluginManager(Singleton):
             path = os.path.dirname(__file__)
         fs_path = path.replace(".", "/")
         for (_, name, ispkg) in pkgutil.iter_modules([fs_path]):
-            pkg_name = "{}.{}".format(path, name)
+            pkg_name = os.path.join(fs_path, name)
+
             if pkg_name not in sys.modules:
                 module = self._import_module(path, pkg_name)
             else:
