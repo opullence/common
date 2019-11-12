@@ -13,6 +13,16 @@ class Composable(JsonSerializable):
     def data(self):
         return self._data
 
+    def __eq__(self, other):
+        if not isinstance(other, Composable):
+            return False
+        s_items = self.get(force_array=True)
+        o_items = other.get(force_array=True)
+        for s, o in zip(s_items, o_items):
+            if s != o:
+                return False
+        return True
+
     @data.setter
     def data(self, data):
         if is_fact_or_composite(data):
@@ -94,6 +104,8 @@ class Result(JsonSerializable):
         obj_dict = super().to_json()
         obj_dict.update(
             {
+                "_input": None,
+                "_output": None,
                 "identifier": self.identifier.hex,
                 "input": self.input.get(),
                 "output": self.output,

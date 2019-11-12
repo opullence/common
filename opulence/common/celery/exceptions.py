@@ -5,7 +5,7 @@ class TaskError(Exception):
 
 class TaskTimeoutError(TaskError):
     def __init__(self, value):
-        super(TaskError, self).__init__(value)
+        super().__init__(value)
 
     def __str__(self):
         return "Task timeout: ({})".format(self.value)
