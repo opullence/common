@@ -18,7 +18,7 @@ class JsonSerializable:
             module = importlib.import_module(module_name)
             _class = getattr(module, class_name)
             obj = _class(**json_dict)
-        else:
+        else:  # pragma: no cover
             obj = json_dict
         return obj
 
@@ -32,18 +32,9 @@ class Composite(JsonSerializable):
             else:
                 self._elements.append(a)
 
-    def __add__(self, other):
-        return list(filter(None, (set(self.elements + other.elements))))
-
     @property
     def elements(self):
         return self._elements
-
-    def add(self, element):
-        self._elements.append(element)
-
-    def remove(self, element):
-        self._elements.remove(element)
 
 
 def is_composite(obj):

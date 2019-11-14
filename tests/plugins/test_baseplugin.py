@@ -84,4 +84,3 @@ class TestBasePlugin(unittest.TestCase):
         self.assertTrue(bp.errored)
         self.assertTrue("Wrong status arguments" in bp_error)
         self.assertEqual(bp_code, PluginStatus.ERROR)
-
