@@ -13,13 +13,12 @@ class PluginVerifyError(PluginError):
 
 class DependencyMissing(PluginError):
     def __init__(self, value=None, dependency=None):
-        super().__init__(value)
+        super(DependencyMissing, self).__init__(value)
         self.dependency = None or dependency
 
     def __str__(self):
         return "Missing dependency ({}): {}".format(
-            type(self.dependency).__name__,
-            self.dependency.dependency_name)
+            type(self.dependency).__name__, self.dependency)
 
 
 class ModuleDependencyMissing(DependencyMissing):

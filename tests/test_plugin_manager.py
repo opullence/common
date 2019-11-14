@@ -1,9 +1,10 @@
 import unittest
 from inspect import isclass
 
-from mock import patch, call
+from mock import patch, call, MagicMock
 
 from opulence.common.plugins import BasePlugin, PluginStatus, PluginManager
+from opulence.common.plugins.exceptions import PluginVerifyError, DependencyMissing, ModuleDependencyMissing
 
 class basePlugin(BasePlugin):
     _name_ = "name"
@@ -45,3 +46,87 @@ class TestPluginManager(unittest.TestCase):
         mock_import_module.assert_called_with("/path/to/collector/directory")
         mock_iter_modules.assert_has_calls([call(["/path/to/collector/"]), call(["/path/to/collector/directory"])])
 
+    def test_register(self):
+        mock_dependency = MagicMock()
+        mock_dependency.verify = MagicMock()
+        class basePlugin(BasePlugin):
+            _name_ = "name"
+            _description_ = "desc"
+            _author_ = "author"
+            _version_ = 1
+
+            _dependencies_ = [mock_dependency]
+            def __init__(self):
+                PluginManager().register_plugin(self)
+
+        pm = PluginManager()
+        pm._plugins_ = {}
+        bp = basePlugin()
+        self.assertEqual(len(pm.get_plugins()), 1)
+        mock_dependency.verify.assert_called_once()
+
+
+    def test_plugin_dependency_raises(self):
+        mock_dependency = MagicMock()
+        mock_dependency.verify = MagicMock()
+        mock_dependency.verify.side_effect = ModuleDependencyMissing
+        class basePlugin(BasePlugin):
+            _name_ = "name"
+            _description_ = "desc"
+            _author_ = "author"
+            _version_ = 1
+
+            _dependencies_ = [mock_dependency]
+            def __init__(self):
+                PluginManager().register_plugin(self)
+
+        pm = PluginManager()
+        pm._plugins_ = {}
+        bp = basePlugin()
+        mock_dependency.verify.assert_called_once()
+
+
+    def test_verify_plugin_ok(self):
+        mock_dependency = MagicMock()
+        mock_dependency.verify = MagicMock()
+        class basePlugin(BasePlugin):
+            _name_ = "name"
+            _description_ = "desc"
+            _author_ = "author"
+            _version_ = 1
+
+            _dependencies_ = [mock_dependency]
+            def __init__(self):
+                PluginManager().register_plugin(self)
+
+            verify = MagicMock()
+
+        pm = PluginManager()
+        pm._plugins_ = {}
+        bp = basePlugin()
+        mock_dependency.verify.assert_called_once()
+        bp.verify.assert_called_once()
+        self.assertEqual(bp.status[0], PluginStatus.READY)
+
+    def test_verify_plugin_raises(self):
+        mock_dependency = MagicMock()
+        mock_dependency.verify = MagicMock()
+        class basePlugin(BasePlugin):
+            _name_ = "name"
+            _description_ = "desc"
+            _author_ = "author"
+            _version_ = 1
+
+            _dependencies_ = [mock_dependency]
+            def __init__(self):
+                PluginManager().register_plugin(self)
+
+            verify = MagicMock()
+            verify.side_effect = PluginVerifyError
+
+        pm = PluginManager()
+        pm._plugins_ = {}
+        bp = basePlugin()
+        mock_dependency.verify.assert_called_once()
+        bp.verify.assert_called_once()
+        self.assertEqual(bp.status[0], PluginStatus.ERROR)
