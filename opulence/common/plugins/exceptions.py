@@ -11,6 +11,22 @@ class PluginVerifyError(PluginError):
         return "Plugin additional verification failed: ({})".format(self.value)
 
 
+class PluginFormatError(PluginError):
+    def __init__(self, value):
+        super().__init__(value)
+
+    def __str__(self):
+        return f"Plugin format error: ({self.value})"
+
+
+class PluginRuntimeError(PluginError):
+    def __init__(self, value):
+        super().__init__(value)
+
+    def __str__(self):
+        return f"Plugin runtime error: ({self.value})"
+
+
 class DependencyMissing(PluginError):
     def __init__(self, value=None, dependency=None):
         super(DependencyMissing, self).__init__(value)
