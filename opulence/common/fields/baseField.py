@@ -47,14 +47,6 @@ class BaseField(JsonSerializable):
         else:
             self._value = None
 
-    # def try_cast_value(self, value):
-    #     try:
-    #         val = self.cast_value(value)
-    #     except Exception as err:
-    #         val = None
-    #     finally:
-    #         return val
-
     def cast_value(self, value):
         return str(value)
 

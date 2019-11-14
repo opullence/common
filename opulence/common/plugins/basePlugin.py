@@ -7,7 +7,7 @@ from importlib import import_module
 
 from ..patterns import Singleton
 from ..utils import generate_uuid
-from .exceptions import DependencyMissing, NotInstanciable, PluginVerifyError
+from .exceptions import DependencyMissing, PluginVerifyError
 
 
 class PluginStatus(IntEnum):
@@ -141,10 +141,7 @@ class PluginManager(Singleton):
             if issubclass(clsmember[1], BasePlugin) and clsmember[
                 1
             ].__module__.startswith(path):
-                try:
-                    clsmember[1]()
-                except NotInstanciable:
-                    pass
+                clsmember[1]()
 
     def _import_module(self, path, plugin):
         try:
@@ -154,20 +151,16 @@ class PluginManager(Singleton):
         else:
             return module
 
-    def discover(self, path=None):
-        if path is None:
-            path = os.path.dirname(__file__)
+    def discover(self, path):
         fs_path = path.replace(".", "/")
         for (_, name, ispkg) in pkgutil.iter_modules([fs_path]):
-            pkg_name = "{}.{}".format(path, name)
+            pkg_name = os.path.join(fs_path, name)
             if pkg_name not in sys.modules:
                 module = self._import_module(path, pkg_name)
             else:
                 module = sys.modules[pkg_name]
-
             self._load_plugin(module, path)
-
-            if ispkg:
+            if ispkg:  # pragma: no cover
                 self.discover(pkg_name)
 
     def register_plugin(self, plugin):
