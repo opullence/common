@@ -40,11 +40,11 @@ class TestPluginManager(unittest.TestCase):
         mock_get_members.return_value = []
         mock_import_module.return_value = "module"
         pm = PluginManager()
-        pm.discover(".path.to.collector.")
+        pm.discover(".path.to.collector")
 
         mock_get_members.assert_called_with("module", isclass)
         mock_import_module.assert_called_with(".path.to.collector.directory")
-        mock_iter_modules.assert_has_calls([call(["/path/to/collector/"]), call(["/path/to/collector/directory"])])
+        mock_iter_modules.assert_has_calls([call(["/path/to/collector"]), call(["/path/to/collector/directory"])])
 
     def test_register(self):
         mock_dependency = MagicMock()

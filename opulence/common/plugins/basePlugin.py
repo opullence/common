@@ -147,21 +147,22 @@ class PluginManager(Singleton):
         try:
             module = import_module(plugin)
         except ModuleNotFoundError as err:
-            print("Module not found ({}): {}".format(err, plugin))
+            print("Module not found ({}): {}".format(plugin, err))
         else:
             return module
 
-    def discover(self, path):
+    def discover(self, path=None):
+        if path is None:
+            path = os.path.dirname(__file__)
         fs_path = path.replace(".", "/")
         for (_, name, ispkg) in pkgutil.iter_modules([fs_path]):
-            pkg_name = os.path.join(fs_path, name)
-            fs_pkg_name = pkg_name.replace("/", ".")
+            pkg_name = "{}.{}".format(path, name)
             if pkg_name not in sys.modules:
-                module = self._import_module(fs_pkg_name)
+                module = self._import_module(pkg_name)
             else:
-                module = sys.modules[fs_pkg_name]
+                module = sys.modules[pkg_name]
             self._load_plugin(module, path)
-            if ispkg:  # pragma: no cover
+            if ispkg:
                 self.discover(pkg_name)
 
     def register_plugin(self, plugin):
