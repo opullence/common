@@ -3,7 +3,7 @@ from datetime import datetime
 
 from .facts import BaseFact
 from .fields import BaseField
-from .job import Composable, Result
+from .job import Result
 from .utils import datetime_to_str, str_to_datetime
 
 
@@ -13,8 +13,6 @@ class encode(json.JSONEncoder):
             return {"__type__": "__result__", "result": obj.to_json()}
         elif isinstance(obj, BaseFact):
             return {"__type__": "__basefact__", "fact": obj.to_json()}
-        elif isinstance(obj, Composable):
-            return {"__type__": "__composable__", "composable": obj.to_json()}
         elif isinstance(obj, BaseField):
             return {"__type__": "__basefield__", "field": obj.to_json()}
         elif isinstance(obj, datetime):
@@ -26,8 +24,6 @@ def decode(obj):
     if "__type__" in obj:
         if obj["__type__"] == "__result__":
             return Result.from_json(obj["result"])
-        elif obj["__type__"] == "__composable__":
-            return Composable.from_json(obj["composable"])
         elif obj["__type__"] == "__basefact__":
             return BaseFact.from_json(obj["fact"])
         elif obj["__type__"] == "__basefield__":

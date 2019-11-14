@@ -101,18 +101,15 @@ class Result(JsonSerializable):
             }
 
     def to_json(self):
-        obj_dict = super().to_json()
-        obj_dict.update(
-            {
-                "_input": None,
-                "_output": None,
+        obj_dict = {
+                "__class__": self.__class__.__name__,
+                "__module__": self.__module__,
                 "identifier": self.identifier.hex,
                 "input": self.input.get(),
                 "output": self.output,
                 "clock": self.clock.to_json(),
                 "status": (int(self.status["status"]), self.status["error"])
-            }
-        )
+        }
         return obj_dict
 
     @staticmethod
