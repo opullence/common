@@ -17,7 +17,7 @@ class encode(json.JSONEncoder):
             return {"__type__": "__basefield__", "field": obj.to_json()}
         elif isinstance(obj, datetime):
             return {"__type__": "__datetime__", "epoch": datetime_to_str(obj)}
-        return json.JSONEncoder.default(self, obj)
+        return json.JSONEncoder.default(self, obj)  # pragma: no cover
 
 
 def decode(obj):

@@ -7,7 +7,7 @@ from importlib import import_module
 
 from ..patterns import Singleton
 from ..utils import generate_uuid
-from .exceptions import DependencyMissing, NotInstanciable, PluginVerifyError
+from .exceptions import DependencyMissing, PluginVerifyError
 
 
 class PluginStatus(IntEnum):
@@ -141,10 +141,7 @@ class PluginManager(Singleton):
             if issubclass(clsmember[1], BasePlugin) and clsmember[
                 1
             ].__module__.startswith(path):
-                try:
-                    clsmember[1]()
-                except NotInstanciable:
-                    pass
+                clsmember[1]()
 
     def _import_module(self, path, plugin):
         try:
