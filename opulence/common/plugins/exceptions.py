@@ -16,7 +16,7 @@ class PluginFormatError(PluginError):
         super().__init__(value)
 
     def __str__(self):
-        return f"Plugin format error: ({self.value})"
+        return "Plugin format error: ({})".format(self.value)
 
 
 class PluginRuntimeError(PluginError):
@@ -24,7 +24,7 @@ class PluginRuntimeError(PluginError):
         super().__init__(value)
 
     def __str__(self):
-        return f"Plugin runtime error: ({self.value})"
+        return "Plugin runtime error: ({})".format(self.value)
 
 
 class DependencyMissing(PluginError):
