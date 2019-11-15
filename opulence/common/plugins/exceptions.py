@@ -16,7 +16,7 @@ class PluginFormatError(PluginError):
         super().__init__(value)
 
     def __str__(self):
-        return "Plugin format error: ({})".format(self.value)
+        return f"Plugin format error: ({self.value})"
 
 
 class PluginRuntimeError(PluginError):
