@@ -48,24 +48,22 @@ class BaseFact(BasePlugin, JsonSerializable):
         # it will aways be considered valid
 
         for _, f in self.get_fields().items():
-            if f.mandatory and f.value is None:
+            if f.mandatory and (f.value is None or f.value is f.default):
                 return False
         return True
 
     def get_fields(self):
         return {
-            field: self.__dict__[field]
-            for field in self.__dict__
-            if isinstance(self.__dict__[field], BaseField)
+            key: value
+            for key, value in self.__dict__.items()
+            if isinstance(value, BaseField)
         }
 
     def get_info(self):
         fields = []
         for key, data in self.get_fields().items():
-            fields.append({
-                "name": key,
-                "mandatory": data.mandatory,
-                "value": data.value
-            })
+            fields.append(
+                {"name": key, "mandatory": data.mandatory, "value": data.value}
+            )
         data = {"fields": fields}
         return {**super().get_info(), **data}

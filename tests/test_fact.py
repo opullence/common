@@ -29,6 +29,62 @@ class TestFact(unittest.TestCase):
         self.assertIsNone(fact.a.default)
         self.assertFalse(fact.a.mandatory)
 
+    def test_valid_fact_0(self):
+        class Person(BaseFact):
+            _name_ = "superplugin"
+            _description_ = "desc"
+            _author_ = "nobody"
+            _version_ = 42
+
+            def setup(self):
+                self.a = StringField(mandatory=True)
+                self.b = StringField()
+
+        fact = Person(a="yes")
+        self.assertTrue(fact.is_valid())
+
+    def test_valid_fact_1(self):
+        class Person(BaseFact):
+            _name_ = "superplugin"
+            _description_ = "desc"
+            _author_ = "nobody"
+            _version_ = 42
+
+            def setup(self):
+                self.a = StringField(mandatory=True, default="aze")
+                self.b = StringField()
+
+        fact = Person(a="yes")
+        self.assertTrue(fact.is_valid())
+
+    def test_invalid_fact_0(self):
+        class Person(BaseFact):
+            _name_ = "superplugin"
+            _description_ = "desc"
+            _author_ = "nobody"
+            _version_ = 42
+
+            def setup(self):
+                self.a = StringField(mandatory=True, default="def")
+                self.b = StringField()
+
+        fact = Person()
+        self.assertFalse(fact.is_valid())
+
+    def test_invalid_fact__1(self):
+        class Person(BaseFact):
+            _name_ = "superplugin"
+            _description_ = "desc"
+            _author_ = "nobody"
+            _version_ = 42
+
+            def setup(self):
+                self.a = StringField(mandatory=True, default="def")
+                self.b = StringField()
+
+        fact = Person(a="def")
+        self.assertFalse(fact.is_valid())
+
     def test_complex_fact(self):
         class Person(BaseFact):
             _name_ = "superplugin"
@@ -98,8 +154,6 @@ class TestFact(unittest.TestCase):
         c = Person()
         self.assertEqual(hash(a), hash(b), hash(c))
 
-
-
     def test_facts_hash_invalid_plugin(self):
         class Person(BaseFact):
             _name_ = "superplugin"
@@ -129,7 +183,6 @@ class TestFact(unittest.TestCase):
         self.assertNotEqual(hash(b), hash(c))
 
         self.assertEqual(a.plugin_category, "BaseFact")
-
 
     def test_facts_hash_comparison(self):
         class Person(BaseFact):
@@ -180,9 +233,14 @@ class TestFact(unittest.TestCase):
                 self.a = StringField(default="42")
                 self.b = IntegerField()
                 self.c = IntegerField(default=424242)
+
         a = Person(a="42", c=424242)
 
         infos = a.get_info()
         self.assertTrue("plugin_data" in infos)
-        self.assertTrue({"name": "a", "mandatory": False, "value": "42"} in infos["fields"])
-        self.assertTrue({'name': 'b', 'mandatory': False, 'value': None} in infos["fields"])
+        self.assertTrue(
+            {"name": "a", "mandatory": False, "value": "42"} in infos["fields"]
+        )
+        self.assertTrue(
+            {"name": "b", "mandatory": False, "value": None} in infos["fields"]
+        )
