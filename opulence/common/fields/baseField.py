@@ -2,7 +2,7 @@ from ..patterns import JsonSerializable
 
 
 class BaseField(JsonSerializable):
-    def __init__(self, value=None, default=None, mandatory=False, **kwargs):
+    def __init__(self, value=None, default=None, mandatory=False):
         self.default = default
         self._mandatory = mandatory
         self._value = None
@@ -53,10 +53,6 @@ class BaseField(JsonSerializable):
     def to_json(self):
         obj_dict = super().to_json()
         obj_dict.update(
-            {
-                "value": self.value,
-                "default": self.default,
-                "mandatory": self.mandatory,
-            }
+            {"value": self.value, "default": self.default, "mandatory": self.mandatory}
         )
         return obj_dict

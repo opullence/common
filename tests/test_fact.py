@@ -178,9 +178,10 @@ class TestFact(unittest.TestCase):
         aa = Person()
         b = Person(a="joe")
         c = Person(a="joe")
+
         self.assertNotEqual(hash(a), hash(b))
-        self.assertNotEqual(hash(a), hash(aa))
-        self.assertNotEqual(hash(b), hash(c))
+        self.assertEqual(hash(a), hash(aa))
+        self.assertEqual(hash(b), hash(c))
 
         self.assertEqual(a.plugin_category, "BaseFact")
 
@@ -197,6 +198,7 @@ class TestFact(unittest.TestCase):
         b = Person(a="joe")
         c = Person(a="job")
         self.assertEqual(hash(a), hash(b))
+
         self.assertNotEqual(hash(a), hash(c))
         self.assertNotEqual(hash(b), hash(c))
 
@@ -244,3 +246,70 @@ class TestFact(unittest.TestCase):
         self.assertTrue(
             {"name": "b", "mandatory": False, "value": None} in infos["fields"]
         )
+
+    def test_fact_additional_fields_equal(self):
+        class Person(BaseFact):
+            _name_ = "superplugin"
+            _description_ = "desc"
+            _author_ = "nobody"
+            _version_ = 42
+
+            def setup(self):
+                self.a = StringField()
+
+        factA = Person(a="Hello", additional="world")
+        factB = Person(a="Hello", additional="world")
+
+        self.assertTrue(factA.is_valid())
+        self.assertEqual(factA, factB)
+        self.assertEqual(hash(factA), hash(factB))
+
+    def test_fact_additional_fields_not_equal(self):
+        class Person(BaseFact):
+            _name_ = "superplugin"
+            _description_ = "desc"
+            _author_ = "nobody"
+            _version_ = 42
+
+            def setup(self):
+                self.a = StringField()
+
+        factA = Person(a="Hello", additional="world")
+        factB = Person(a="Hello", additional="hello")
+
+        self.assertTrue(factA.is_valid())
+        self.assertNotEqual(factA, factB)
+        self.assertNotEqual(hash(factA), hash(factB))
+
+    def test_fact_additional_fields_not_equal_2(self):
+        class Person(BaseFact):
+            _name_ = "superplugin"
+            _description_ = "desc"
+            _author_ = "nobody"
+            _version_ = 42
+
+            def setup(self):
+                self.a = StringField()
+
+        factA = Person(a="Hello", additional="world")
+        factB = Person(a="Hello", hello="world")
+
+        self.assertTrue(factA.is_valid())
+        self.assertTrue(factB.is_valid())
+
+        self.assertNotEqual(factA, factB)
+        self.assertNotEqual(hash(factA), hash(factB))
+
+    def test_fact_compare_to_dummy(self):
+        class Person(BaseFact):
+            _name_ = "superplugin"
+            _description_ = "desc"
+            _author_ = "nobody"
+            _version_ = 42
+
+            def setup(self):
+                self.a = StringField()
+
+        fact = Person(a="Hello", additional="world")
+
+        self.assertFalse(fact == 42)
