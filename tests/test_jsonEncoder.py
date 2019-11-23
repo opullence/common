@@ -3,9 +3,11 @@ import unittest
 
 from opulence.common.facts import BaseFact
 from opulence.common.fields import IntegerField, StringField
-from opulence.common.job import Result
-from opulence.common.jsonEncoder import decode, encode, custom_dumps, custom_loads
-
+from opulence.common.job import Composable, Result
+from opulence.common.jsonEncoder import (
+    custom_dumps, custom_loads, decode, encode
+)
+from opulence.common.patterns import Composite
 from opulence.common.plugins import BasePlugin, PluginStatus
 
 
@@ -35,14 +37,11 @@ class FactB(BaseFact):
 
 class TestJsonEncodeJob(unittest.TestCase):
     def test_encode_simple_json(self):
-        valid_json = {
-            "john": 42,
-            '42': "john"
-        }
+        valid_json = {"john": 42, "42": "john"}
 
         to_json = custom_dumps(valid_json)
         from_json = custom_loads(to_json)
-        
+
         self.assertEqual(valid_json, from_json)
 
     def test_encode_PluginStatus(self):
@@ -64,20 +63,35 @@ class TestJsonEncodeJob(unittest.TestCase):
         self.assertEqual(r.clock.start_date, new_r.clock.start_date)
         self.assertEqual(r.clock.end_date, new_r.clock.end_date)
 
-    def test_encode_complex_job(self):
+    def test_encode_complex_job_01(self):
         r = Result()
         r.input = FactA(a="42", b=2)
         r.output = FactB(a="42", b=2)
-        r.clock.start()
         r_json = r.to_json()
         new_r = Result.from_json(r_json)
+
         self.assertEqual(r.identifier, new_r.identifier)
+
+        self.assertIsInstance(r.input, Composable)
+        self.assertIsInstance(new_r.input, Composable)
         self.assertEqual(r.input.get(), new_r.input.get())
         self.assertEqual(r.output, new_r.output)
-        for a, b in zip(r.output, new_r.output):
-            self.assertEqual(a, b)
-        self.assertEqual(r.clock.start_date, new_r.clock.start_date)
-        self.assertEqual(r.clock.end_date, new_r.clock.end_date)
+
+    def test_encode_complex_job_02(self):
+        r = Result()
+        r.input = Composite(FactA(a="42", b=2), FactB(a=1, b=2))
+        r.output = [FactA(a=1, b=4), FactA(a=2, b=3), FactB(a=3, b=2), FactB(a=4, b=1)]
+        r_json = r.to_json()
+        new_r = Result.from_json(r_json)
+
+        self.assertEqual(r.identifier, new_r.identifier)
+
+        self.assertIsInstance(r.input, Composable)
+        self.assertIsInstance(new_r.input, Composable)
+        self.assertEqual(r.input.get(), new_r.input.get())
+
+        self.assertEqual(r.output, new_r.output)
+        self.assertEqual(len(r.output), 4)
 
     def test_encode_job_using_json(self):
         r = Result()
@@ -145,3 +159,7 @@ class TestJsonEncodeIntegerField(unittest.TestCase):
         self.assertEqual(new_s.value, s.value)
         self.assertEqual(new_s.default, s.default)
         self.assertEqual(new_s.mandatory, s.mandatory)
+
+
+if __name__ == "__main__":
+    unittest.main()

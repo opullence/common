@@ -1,12 +1,13 @@
+from ..facts import BaseFact
 from ..facts.utils import is_fact_or_composite
-from ..patterns import JsonSerializable, is_composite
+from ..patterns import Composite, JsonSerializable, is_composite
 from ..timer import Clock
 from ..utils import generate_uuid, hex_to_uuid, is_list
 from .status import StatusCode
 
 
 class Composable(JsonSerializable):
-    def __init__(self, data=None, **kwargs):
+    def __init__(self, data=None):
         self.data = data
 
     @property
@@ -47,7 +48,6 @@ class Result(JsonSerializable):
         status=StatusCode.undefined,
         identifier=None,
         clock=None,
-        **kwargs
     ):
         if identifier is None:
             self.identifier = generate_uuid()
@@ -101,11 +101,17 @@ class Result(JsonSerializable):
             }
 
     def to_json(self):
+        input = self.input.get()
+        if is_list(input):
+            input_json = [i.to_json() for i in input]
+        else:
+            input_json = input.to_json()
+
         obj_dict = {
             "__class__": self.__class__.__name__,
             "__module__": self.__module__,
             "identifier": self.identifier.hex,
-            "input": self.input.get(),
+            "input": input_json,
             "output": self.output,
             "clock": self.clock.to_json(),
             "status": (int(self.status["status"]), self.status["error"]),
@@ -114,8 +120,14 @@ class Result(JsonSerializable):
 
     @staticmethod
     def from_json(json_dict):
+        if is_list(json_dict["input"]):
+            input_list = [BaseFact.from_json(i) for i in json_dict["input"]]
+            input_cls = Composite(input_list)
+        else:
+            input_cls = BaseFact.from_json(json_dict["input"])
         json_dict.update(
             {
+                "input": input_cls,
                 "identifier": hex_to_uuid(json_dict["identifier"]),
                 "clock": Clock.from_json(json_dict["clock"]),
             }

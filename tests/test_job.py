@@ -141,3 +141,39 @@ class TestJobResult(unittest.TestCase):
         self.assertEqual(1, len(j.output))
         self.assertEqual(j.output[0], b)
         self.assertEqual(j.output[0].get_info(), b.get_info())
+
+    def test_job_result_output2(self):
+        r = Result()
+        r.input = FactA(a=1, b=2)
+        r.output = [FactA(a=10, b=20), FactA(a=12, b=22)]
+
+        r_json = r.to_json()
+        r_json2 = json.dumps(r, cls=encode)
+        new_r = json.loads(r_json2, object_hook=decode)
+        new_r_json = new_r.to_json()
+
+        self.assertEqual(r_json["input"], new_r_json["input"])
+        for a, b in zip(r_json["input"], new_r_json["input"]):
+            self.assertTrue(a == b)
+
+        self.assertEqual(r_json["output"], new_r_json["output"])
+        for a, b in zip(r_json["output"], new_r_json["output"]):
+            self.assertTrue(a == b)
+
+    def test_job_result_output3(self):
+        r = Result()
+        r.input = Composite(FactA(a=1, b=2), FactA(a=10, b=20))
+        r.output = FactA(a=10, b=20)
+
+        r_json = r.to_json()
+        r_json2 = json.dumps(r, cls=encode)
+        new_r = json.loads(r_json2, object_hook=decode)
+        new_r_json = new_r.to_json()
+
+        self.assertEqual(r_json["input"], new_r_json["input"])
+        for a, b in zip(r_json["input"], new_r_json["input"]):
+            self.assertTrue(a == b)
+
+        self.assertEqual(r_json["output"], new_r_json["output"])
+        for a, b in zip(r_json["output"], new_r_json["output"]):
+            self.assertTrue(a == b)
