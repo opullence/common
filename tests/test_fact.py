@@ -3,6 +3,30 @@ import unittest
 from opulence.common.facts import BaseFact
 from opulence.common.fields import BaseField, IntegerField, StringField
 
+class Person(BaseFact):
+    _name_ = "superplugin"
+    _description_ = "desc"
+    _author_ = "nobody"
+    _version_ = 42
+
+    def setup(self):
+        self.a = StringField(mandatory=True)
+        self.b = IntegerField()
+
+class TestFactSerialisation(unittest.TestCase):
+    def test_serialisation_01(self):
+        p = Person(a="a", b=2)
+        p2 = Person(a="a", b=2)
+
+        new_p = Person.from_json(p.to_json())
+        new_p2 = Person.from_json(p2.to_json())
+        self.assertEqual(p, new_p)
+        self.assertEqual(new_p, new_p2)
+        for (a,b), (c,d) in zip(p.get_fields().items(), new_p.get_fields().items()):
+            self.assertTrue(a == c)
+            self.assertTrue(b == d)
+        self.assertEqual(new_p.to_json(), p.to_json())
+
 
 class TestFact(unittest.TestCase):
     def test_simple_fact(self):
@@ -240,12 +264,35 @@ class TestFact(unittest.TestCase):
 
         infos = a.get_info()
         self.assertTrue("plugin_data" in infos)
-        self.assertTrue(
-            {"name": "a", "mandatory": False, "value": "42"} in infos["fields"]
-        )
-        self.assertTrue(
-            {"name": "b", "mandatory": False, "value": None} in infos["fields"]
-        )
+ 
+
+        should_be = { 
+           'a':{ 
+              '__class__':'StringField',
+              '__module__':'opulence.common.fields.fields',
+              'value':'42',
+              'default':'42',
+              'mandatory':False
+           },
+           'b':{ 
+              '__class__':'IntegerField',
+              '__module__':'opulence.common.fields.fields',
+              'value':None,
+              'default':None,
+              'mandatory':False
+           },
+           'c':{ 
+              '__class__':'IntegerField',
+              '__module__':'opulence.common.fields.fields',
+              'value':424242,
+              'default':424242,
+              'mandatory':False
+           }
+        }
+
+
+
+        self.assertEqual(should_be, infos["fields"])
 
     def test_fact_additional_fields_equal(self):
         class Person(BaseFact):

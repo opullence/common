@@ -101,18 +101,25 @@ class Result(JsonSerializable):
             }
 
     def to_json(self):
+
         input = self.input.get()
+        input_json = []
         if is_list(input):
             input_json = [i.to_json() for i in input]
-        else:
+        elif input:
             input_json = input.to_json()
+
+        output_json = []
+        if self.output:
+            output_json = [out.to_json() for out in self.output]
+
 
         obj_dict = {
             "__class__": self.__class__.__name__,
             "__module__": self.__module__,
             "identifier": self.identifier.hex,
             "input": input_json,
-            "output": self.output,
+            "output": output_json,
             "clock": self.clock.to_json(),
             "status": (int(self.status["status"]), self.status["error"]),
         }
@@ -125,8 +132,14 @@ class Result(JsonSerializable):
             input_cls = Composite(input_list)
         else:
             input_cls = BaseFact.from_json(json_dict["input"])
+
+        output = []
+        if "output" in json_dict and json_dict["output"]:
+            output = [BaseFact.from_json(o) for o in json_dict["output"]]
+
         json_dict.update(
             {
+                "output": output,
                 "input": input_cls,
                 "identifier": hex_to_uuid(json_dict["identifier"]),
                 "clock": Clock.from_json(json_dict["clock"]),

@@ -166,14 +166,215 @@ class TestJobResult(unittest.TestCase):
         r.output = FactA(a=10, b=20)
 
         r_json = r.to_json()
-        r_json2 = json.dumps(r, cls=encode)
-        new_r = json.loads(r_json2, object_hook=decode)
+        output_should_be = [ 
+           { 
+              '__class__':'FactA',
+              '__module__':'tests.test_job',
+              'fields':{ 
+                 'a':{ 
+                    '__class__':'IntegerField',
+                    '__module__':'opulence.common.fields.fields',
+                    'value':10,
+                    'default':None,
+                    'mandatory':False
+                 },
+                 'b':{ 
+                    '__class__':'StringField',
+                    '__module__':'opulence.common.fields.fields',
+                    'value':'20',
+                    'default':'b',
+                    'mandatory':False
+                 },
+                 'c':{ 
+                    '__class__':'StringField',
+                    '__module__':'opulence.common.fields.fields',
+                    'value':'c',
+                    'default':'c',
+                    'mandatory':False
+                 }
+              }
+           }
+        ]
+
+        input_should_be = [ 
+           { 
+              '__class__':'FactA',
+              '__module__':'tests.test_job',
+              'fields':{ 
+                 'a':{ 
+                    '__class__':'IntegerField',
+                    '__module__':'opulence.common.fields.fields',
+                    'value':1,
+                    'default':None,
+                    'mandatory':False
+                 },
+                 'b':{ 
+                    '__class__':'StringField',
+                    '__module__':'opulence.common.fields.fields',
+                    'value':'2',
+                    'default':'b',
+                    'mandatory':False
+                 },
+                 'c':{ 
+                    '__class__':'StringField',
+                    '__module__':'opulence.common.fields.fields',
+                    'value':'c',
+                    'default':'c',
+                    'mandatory':False
+                 }
+              }
+           },
+           { 
+              '__class__':'FactA',
+              '__module__':'tests.test_job',
+              'fields':{ 
+                 'a':{ 
+                    '__class__':'IntegerField',
+                    '__module__':'opulence.common.fields.fields',
+                    'value':10,
+                    'default':None,
+                    'mandatory':False
+                 },
+                 'b':{ 
+                    '__class__':'StringField',
+                    '__module__':'opulence.common.fields.fields',
+                    'value':'20',
+                    'default':'b',
+                    'mandatory':False
+                 },
+                 'c':{ 
+                    '__class__':'StringField',
+                    '__module__':'opulence.common.fields.fields',
+                    'value':'c',
+                    'default':'c',
+                    'mandatory':False
+                 }
+              }
+           }
+        ]
+        self.assertEqual(r_json["output"], output_should_be)
+        self.assertEqual(r_json["input"], input_should_be)
+        new_r = Result.from_json(r_json)
         new_r_json = new_r.to_json()
 
-        self.assertEqual(r_json["input"], new_r_json["input"])
-        for a, b in zip(r_json["input"], new_r_json["input"]):
+        for a, b in zip(r.to_json()["input"], new_r_json["input"]):
+            self.assertTrue(a == b)
+        for a, b in zip(r.to_json()["output"], new_r_json["output"]):
             self.assertTrue(a == b)
 
-        self.assertEqual(r_json["output"], new_r_json["output"])
-        for a, b in zip(r_json["output"], new_r_json["output"]):
-            self.assertTrue(a == b)
+
+
+    def test_job_empty(self):
+        r = Result()
+        r_json = r.to_json()
+        new_r = Result.from_json(r_json)
+        self.assertEqual(new_r.to_json(), r.to_json())
+
+
+    def test_job_not_altered(self):
+        r = Result()
+        r.input = Composite(FactA(a=1, b=2), FactA(a=10, b=20))
+        r.output = FactA(a=30, b=40)
+        r_json = r.to_json()
+        #r_1 = Result.from_json(r_json)
+        # r_1_json = r_1.to_json()
+
+        # r_2 = Result.from_json(r_1_json)
+        # r_2_json = r_2.to_json()
+
+
+        input_should_be = [ 
+              { 
+                 '__class__':'FactA',
+                 '__module__':'tests.test_job',
+                 'fields':{ 
+                    'a':{ 
+                       '__class__':'IntegerField',
+                       '__module__':'opulence.common.fields.fields',
+                       'value':1,
+                       'default':None,
+                       'mandatory':False
+                    },
+                    'b':{ 
+                       '__class__':'StringField',
+                       '__module__':'opulence.common.fields.fields',
+                       'value':'2',
+                       'default':'b',
+                       'mandatory':False
+                    },
+                    'c':{ 
+                       '__class__':'StringField',
+                       '__module__':'opulence.common.fields.fields',
+                       'value':'c',
+                       'default':'c',
+                       'mandatory':False
+                    }
+                 }
+              },
+              { 
+                 '__class__':'FactA',
+                 '__module__':'tests.test_job',
+                 'fields':{ 
+                    'a':{ 
+                       '__class__':'IntegerField',
+                       '__module__':'opulence.common.fields.fields',
+                       'value':10,
+                       'default':None,
+                       'mandatory':False
+                    },
+                    'b':{ 
+                       '__class__':'StringField',
+                       '__module__':'opulence.common.fields.fields',
+                       'value':'20',
+                       'default':'b',
+                       'mandatory':False
+                    },
+                    'c':{ 
+                       '__class__':'StringField',
+                       '__module__':'opulence.common.fields.fields',
+                       'value':'c',
+                       'default':'c',
+                       'mandatory':False
+                    }
+                 }
+              }
+        ]
+           
+        output_should_be = [ 
+              { 
+                 '__class__':'FactA',
+                 '__module__':'tests.test_job',
+                 'fields':{ 
+                    'a':{ 
+                       '__class__':'IntegerField',
+                       '__module__':'opulence.common.fields.fields',
+                       'value':30,
+                       'default':None,
+                       'mandatory':False
+                    },
+                    'b':{ 
+                       '__class__':'StringField',
+                       '__module__':'opulence.common.fields.fields',
+                       'value':'40',
+                       'default':'b',
+                       'mandatory':False
+                    },
+                    'c':{ 
+                       '__class__':'StringField',
+                       '__module__':'opulence.common.fields.fields',
+                       'value':'c',
+                       'default':'c',
+                       'mandatory':False
+                    }
+                 }
+              }
+        ]
+        self.assertEqual(input_should_be, r_json["input"])
+        self.assertEqual(output_should_be, r_json["output"])
+
+
+        # self.assertEqual(input_should_be, r_1_json["input"])
+        # self.assertEqual(output_should_be, r_1_json["output"])
+
+        # self.assertEqual(input_should_be, r_2_json["input"])
+        # self.assertEqual(output_should_be, r_2_json["output"])

@@ -40,17 +40,36 @@ class BaseFact(BasePlugin, JsonSerializable):
                 return False
         return True
 
-    def get_fields(self):
+    def get_fields(self, json=False):
+        if not json:
+            return {
+                key: value
+                for key, value in self.__dict__.items()
+                if isinstance(value, BaseField)
+            }
         return {
-            key: value
+            key: value.to_json( )
             for key, value in self.__dict__.items()
             if isinstance(value, BaseField)
         }
+        
+
 
     def get_info(self):
-        fields = [
-            {"name": key, "mandatory": value.mandatory, "value": value.value}
-            for key, value in self.get_fields().items()
-        ]
-        data = {"fields": fields}
+        data = {"fields": self.get_fields(json=True)}
         return {**super().get_info(), **data}
+
+    def to_json(self):
+        obj_dict = {
+            "__class__": self.__class__.__name__,
+            "__module__": self.__module__,
+            "fields": self.get_fields(json=True)
+        }
+        return obj_dict
+
+    @staticmethod
+    def from_json(json_dict):
+        fields = {key: BaseField.from_json(value) for key, value in json_dict["fields"].items()}
+        del json_dict["fields"]
+        json_dict.update(fields)
+        return super(BaseFact, BaseFact).from_json(json_dict)
