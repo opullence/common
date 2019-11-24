@@ -56,6 +56,6 @@ class BaseField(JsonSerializable):
             "__module__": self.__module__,
             "value": self.value,
             "default": self.default,
-            "mandatory": self.mandatory
+            "mandatory": self.mandatory,
         }
         return obj_dict

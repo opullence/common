@@ -6,12 +6,14 @@ from . import jsonEncoder
 
 def configure_celery(config, custom_encoder=True, **kwargs):
     app = Celery(__name__, **kwargs)
-    config.update({
+    config.update(
+        {
             "task_routes": ("opulence.common.celery.taskRouter.TaskRouter",),
-            "accept_content": ["customEncoder", 'application/json'],
+            "accept_content": ["customEncoder", "application/json"],
             "task_serializer": "customEncoder",
             "result_serializer": "customEncoder",
-        })
+        }
+    )
     app.conf.update(config)
     if custom_encoder:
         register(

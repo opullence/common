@@ -1,5 +1,5 @@
 from .patterns import JsonSerializable
-from .utils import now, datetime_to_str, str_to_datetime
+from .utils import datetime_to_str, now, str_to_datetime
 
 
 class Clock(JsonSerializable):
@@ -23,7 +23,6 @@ class Clock(JsonSerializable):
         if self.end_date:
             return self.end_date - self.start_date
         return now() - self.start_date
-
 
     def to_json(self):
         obj_dict = {

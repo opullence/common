@@ -113,7 +113,6 @@ class Result(JsonSerializable):
         if self.output:
             output_json = [out.to_json() for out in self.output]
 
-
         obj_dict = {
             "__class__": self.__class__.__name__,
             "__module__": self.__module__,

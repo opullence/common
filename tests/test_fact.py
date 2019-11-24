@@ -3,6 +3,7 @@ import unittest
 from opulence.common.facts import BaseFact
 from opulence.common.fields import BaseField, IntegerField, StringField
 
+
 class Person(BaseFact):
     _name_ = "superplugin"
     _description_ = "desc"
@@ -13,6 +14,7 @@ class Person(BaseFact):
         self.a = StringField(mandatory=True)
         self.b = IntegerField()
 
+
 class TestFactSerialisation(unittest.TestCase):
     def test_serialisation_01(self):
         p = Person(a="a", b=2)
@@ -22,7 +24,7 @@ class TestFactSerialisation(unittest.TestCase):
         new_p2 = Person.from_json(p2.to_json())
         self.assertEqual(p, new_p)
         self.assertEqual(new_p, new_p2)
-        for (a,b), (c,d) in zip(p.get_fields().items(), new_p.get_fields().items()):
+        for (a, b), (c, d) in zip(p.get_fields().items(), new_p.get_fields().items()):
             self.assertTrue(a == c)
             self.assertTrue(b == d)
         self.assertEqual(new_p.to_json(), p.to_json())
@@ -264,33 +266,30 @@ class TestFact(unittest.TestCase):
 
         infos = a.get_info()
         self.assertTrue("plugin_data" in infos)
- 
 
-        should_be = { 
-           'a':{ 
-              '__class__':'StringField',
-              '__module__':'opulence.common.fields.fields',
-              'value':'42',
-              'default':'42',
-              'mandatory':False
-           },
-           'b':{ 
-              '__class__':'IntegerField',
-              '__module__':'opulence.common.fields.fields',
-              'value':None,
-              'default':None,
-              'mandatory':False
-           },
-           'c':{ 
-              '__class__':'IntegerField',
-              '__module__':'opulence.common.fields.fields',
-              'value':424242,
-              'default':424242,
-              'mandatory':False
-           }
+        should_be = {
+            "a": {
+                "__class__": "StringField",
+                "__module__": "opulence.common.fields.fields",
+                "value": "42",
+                "default": "42",
+                "mandatory": False,
+            },
+            "b": {
+                "__class__": "IntegerField",
+                "__module__": "opulence.common.fields.fields",
+                "value": None,
+                "default": None,
+                "mandatory": False,
+            },
+            "c": {
+                "__class__": "IntegerField",
+                "__module__": "opulence.common.fields.fields",
+                "value": 424242,
+                "default": 424242,
+                "mandatory": False,
+            },
         }
-
-
 
         self.assertEqual(should_be, infos["fields"])
 

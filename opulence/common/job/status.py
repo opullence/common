@@ -1,4 +1,4 @@
-class StatusCode():
+class StatusCode:
     undefined = 0
     empty = 10
     ready = 20

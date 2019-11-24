@@ -1,5 +1,4 @@
 import json
-from datetime import datetime
 
 from .facts import BaseFact
 from .fields import BaseField
