@@ -4,7 +4,6 @@ from datetime import datetime
 from .facts import BaseFact
 from .fields import BaseField
 from .job import Result
-from .utils import datetime_to_str, str_to_datetime
 
 
 class encode(json.JSONEncoder):
@@ -15,8 +14,6 @@ class encode(json.JSONEncoder):
             return {"__type__": "__basefact__", "fact": obj.to_json()}
         elif isinstance(obj, BaseField):
             return {"__type__": "__basefield__", "field": obj.to_json()}
-        elif isinstance(obj, datetime):
-            return {"__type__": "__datetime__", "epoch": datetime_to_str(obj)}
         return json.JSONEncoder.default(self, obj)  # pragma: no cover
 
 
@@ -28,8 +25,6 @@ def decode(obj):
             return BaseFact.from_json(obj["fact"])
         elif obj["__type__"] == "__basefield__":
             return BaseField.from_json(obj["field"])
-        elif obj["__type__"] == "__datetime__":
-            return str_to_datetime(obj["epoch"])
     return obj
 
 

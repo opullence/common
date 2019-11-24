@@ -9,12 +9,14 @@ def now():
 
 
 def datetime_to_str(date: datetime):
-    return date.isoformat()
-
+    if isinstance(date, datetime):
+        return date.isoformat()
+    return None
 
 def str_to_datetime(s: str):
-    return parse(s)
-
+    if s is not None:
+        return parse(s)
+    return None
 
 def hex_to_uuid(hex):
     return uuid.UUID(hex)
