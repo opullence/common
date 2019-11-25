@@ -48,6 +48,7 @@ class Result(JsonSerializable):
         status=StatusCode.undefined,
         identifier=None,
         clock=None,
+        collector_data=None
     ):
         if identifier is None:
             self.identifier = generate_uuid()
@@ -62,6 +63,7 @@ class Result(JsonSerializable):
         self.input = input
         self.output = output
         self.status = status
+        self.collector_data = collector_data
 
     @property
     def input(self):
@@ -117,6 +119,7 @@ class Result(JsonSerializable):
             "__class__": self.__class__.__name__,
             "__module__": self.__module__,
             "identifier": self.identifier.hex,
+            "collector_data": self.collector_data,
             "input": input_json,
             "output": output_json,
             "clock": self.clock.to_json(),
