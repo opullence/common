@@ -47,7 +47,7 @@ class TestPluginManager(unittest.TestCase):
         pm.discover(".path.to.collector")
 
         mock_get_members.assert_called_with("module", isclass)
-        mock_import_module.assert_called_with(".path.to.collector.directory")
+        mock_import_module.assert_called_with("/path/to/collector/directory")
         mock_iter_modules.assert_has_calls(
             [call(["/path/to/collector"]), call(["/path/to/collector/directory"])]
         )
