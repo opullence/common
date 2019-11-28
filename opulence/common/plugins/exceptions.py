@@ -3,6 +3,22 @@ class PluginError(Exception):
         self.value = value or ""
 
 
+class PluginFormatError(PluginError):
+    def __init__(self, value):
+        super().__init__(value)
+
+    def __str__(self):
+        return "Plugin format error: ({})".format(self.value)
+
+
+class PluginRuntimeError(PluginError):
+    def __init__(self, value):
+        super().__init__(value)
+
+    def __str__(self):
+        return "Plugin runtime error: ({})".format(self.value)
+
+
 class PluginVerifyError(PluginError):
     def __init__(self, value=None):
         super().__init__(value)
