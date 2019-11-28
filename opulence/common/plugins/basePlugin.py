@@ -151,18 +151,16 @@ class PluginManager(Singleton):
         else:
             return module
 
-    def discover(self, path=None):
-        if path is None:
-            path = os.path.dirname(__file__)
+    def discover(self, path):
         fs_path = path.replace(".", "/")
         for (_, name, ispkg) in pkgutil.iter_modules([fs_path]):
-            pkg_name = "{}.{}".format(path, name)
+            pkg_name = os.path.join(fs_path, name)
             if pkg_name not in sys.modules:
                 module = self._import_module(pkg_name)
             else:
                 module = sys.modules[pkg_name]
             self._load_plugin(module, path)
-            if ispkg:
+            if ispkg:  # pragma: no cover
                 self.discover(pkg_name)
 
     def register_plugin(self, plugin):
