@@ -36,7 +36,7 @@ class BaseFact(BasePlugin, JsonSerializable):
 
     def is_valid(self):
         for _, f in self.get_fields().items():
-            if f.mandatory and (f.value is None or f.value is f.default):
+            if f.mandatory is True and (f.value is None or f.value is f.default):
                 return False
         return True
 
