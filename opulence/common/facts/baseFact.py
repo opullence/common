@@ -1,40 +1,31 @@
-from ..fields import BaseField
+from ..fields import BaseField, DynamicField
 from ..patterns import JsonSerializable
 from ..plugins.basePlugin import BasePlugin
 
 
 class BaseFact(BasePlugin, JsonSerializable):
-    def __new__(cls, **kwargs):
-        return super().__new__(cls)
-
     def __init__(self, **kwargs):
         self.setup()
         for key, value in kwargs.items():
-
             if key in self.__dict__:
                 if isinstance(value, BaseField):
                     self.__dict__[key] = value
                 else:
                     self.__dict__[key].value = value
-
+            else:
+                setattr(self, key, DynamicField(value=value))
         super().__init__()
 
     def __hash__(self):
         val = 0
-        for f in self.get_fields():
-            val += hash(self.__dict__[f])
+        for key, value in self.get_fields().items():
+            val += hash(key) + hash(value)
         if val == 0:
-            return id(self)
+            return -1
         return val
 
     def __eq__(self, other):
-        zip_fields = [
-            [self.__dict__[s], other.__dict__[o]]
-            for s, o in zip(self.__dict__, other.__dict__)
-        ]
-        return self.__class__ == other.__class__ and all(
-            [False if s.value != o.value else True for s, o in zip_fields]
-        )
+        return hash(self) == hash(other) if isinstance(other, BaseFact) else False
 
     def setup(self):
         pass
@@ -44,28 +35,42 @@ class BaseFact(BasePlugin, JsonSerializable):
         return BaseFact.__name__
 
     def is_valid(self):
-        # Note: if a field is `mandatory` and contains a `default` value
-        # it will aways be considered valid
-
         for _, f in self.get_fields().items():
-            if f.mandatory and f.value is None:
+            if f.mandatory and (f.value is None or f.value is f.default):
                 return False
         return True
 
-    def get_fields(self):
+    def get_fields(self, json=False):
+        if not json:
+            return {
+                key: value
+                for key, value in self.__dict__.items()
+                if isinstance(value, BaseField)
+            }
         return {
-            field: self.__dict__[field]
-            for field in self.__dict__
-            if isinstance(self.__dict__[field], BaseField)
+            key: value.to_json()
+            for key, value in self.__dict__.items()
+            if isinstance(value, BaseField)
         }
 
     def get_info(self):
-        fields = []
-        for key, data in self.get_fields().items():
-            fields.append({
-                "name": key,
-                "mandatory": data.mandatory,
-                "value": data.value
-            })
-        data = {"fields": fields}
+        data = {"fields": self.get_fields(json=True)}
         return {**super().get_info(), **data}
+
+    def to_json(self):
+        obj_dict = {
+            "__class__": self.__class__.__name__,
+            "__module__": self.__module__,
+            "fields": self.get_fields(json=True),
+        }
+        return obj_dict
+
+    @staticmethod
+    def from_json(json_dict):
+        fields = {
+            key: BaseField.from_json(value)
+            for key, value in json_dict["fields"].items()
+        }
+        del json_dict["fields"]
+        json_dict.update(fields)
+        return super(BaseFact, BaseFact).from_json(json_dict)

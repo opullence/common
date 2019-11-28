@@ -1,6 +1,6 @@
 import unittest
 
-from opulence.common.utils import is_list, is_iterable
+from opulence.common.utils import is_iterable, is_list
 
 
 class TestIsList(unittest.TestCase):
@@ -13,7 +13,7 @@ class TestIsList(unittest.TestCase):
         class toto:
             pass
 
-        non_lists = [1, 2, "hello", 0.42, toto(), u'nicode']
+        non_lists = [1, 2, "hello", 0.42, toto(), u"nicode"]
         for l in non_lists:
             self.assertEqual(is_list(l), False)
 

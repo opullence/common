@@ -14,7 +14,7 @@ class TestBasePlugin(unittest.TestCase):
         bp = basePlugin()
         bp_code, bp_error = bp.status
         self.assertFalse(bp.errored)
-        self.assertEqual(bp_error, '')
+        self.assertEqual(bp_error, "")
         self.assertEqual(bp_code, PluginStatus.READY)
 
         bp_info = bp.get_info()
@@ -78,7 +78,6 @@ class TestBasePlugin(unittest.TestCase):
 
         bp = basePlugin()
         bp.status = PluginStatus.ERROR
-
 
         bp_code, bp_error = bp.status
         self.assertTrue(bp.errored)

@@ -1,10 +1,13 @@
 import unittest
 from inspect import isclass
 
-from mock import patch, call, MagicMock
+from mock import MagicMock, call, patch
 
-from opulence.common.plugins import BasePlugin, PluginStatus, PluginManager
-from opulence.common.plugins.exceptions import PluginVerifyError, DependencyMissing, ModuleDependencyMissing
+from opulence.common.plugins import BasePlugin, PluginManager, PluginStatus
+from opulence.common.plugins.exceptions import (
+    DependencyMissing, ModuleDependencyMissing, PluginVerifyError
+)
+
 
 class basePlugin(BasePlugin):
     _name_ = "name"
@@ -12,15 +15,13 @@ class basePlugin(BasePlugin):
     _author_ = "author"
     _version_ = 1
 
-class TestPluginManager(unittest.TestCase):
 
+class TestPluginManager(unittest.TestCase):
     @patch("opulence.common.plugins.PluginManager")
     def test_plugin_manager_empty(self, mock):
         pm = PluginManager()
 
-        pm._plugins_ = {
-                    "test.a": basePlugin(),
-                    "test.b": basePlugin()}
+        pm._plugins_ = {"test.a": basePlugin(), "test.b": basePlugin()}
 
         plugins_inst = pm.get_plugins()
         plugins = pm.get_plugins(instance=False)
@@ -33,9 +34,12 @@ class TestPluginManager(unittest.TestCase):
     @patch("opulence.common.plugins.basePlugin.inspect.getmembers")
     @patch("opulence.common.plugins.basePlugin.import_module")
     @patch("opulence.common.plugins.basePlugin.pkgutil.iter_modules")
-    def test_plugin_manager_discover(self, mock_iter_modules, mock_import_module, mock_get_members, mock_is_subclass):
+    def test_plugin_manager_discover(
+        self, mock_iter_modules, mock_import_module, mock_get_members, mock_is_subclass
+    ):
         def gen_iter_modules():
             yield ("loader", "directory", "ispkg")
+
         mock_iter_modules.return_value = gen_iter_modules()
         mock_get_members.return_value = []
         mock_import_module.return_value = "module"
@@ -44,11 +48,14 @@ class TestPluginManager(unittest.TestCase):
 
         mock_get_members.assert_called_with("module", isclass)
         mock_import_module.assert_called_with("/path/to/collector/directory")
-        mock_iter_modules.assert_has_calls([call(["/path/to/collector/"]), call(["/path/to/collector/directory"])])
+        mock_iter_modules.assert_has_calls(
+            [call(["/path/to/collector/"]), call(["/path/to/collector/directory"])]
+        )
 
     def test_register(self):
         mock_dependency = MagicMock()
         mock_dependency.verify = MagicMock()
+
         class basePlugin(BasePlugin):
             _name_ = "name"
             _description_ = "desc"
@@ -56,6 +63,7 @@ class TestPluginManager(unittest.TestCase):
             _version_ = 1
 
             _dependencies_ = [mock_dependency]
+
             def __init__(self):
                 PluginManager().register_plugin(self)
 
@@ -65,11 +73,11 @@ class TestPluginManager(unittest.TestCase):
         self.assertEqual(len(pm.get_plugins()), 1)
         mock_dependency.verify.assert_called_once()
 
-
     def test_plugin_dependency_raises(self):
         mock_dependency = MagicMock()
         mock_dependency.verify = MagicMock()
         mock_dependency.verify.side_effect = ModuleDependencyMissing
+
         class basePlugin(BasePlugin):
             _name_ = "name"
             _description_ = "desc"
@@ -77,6 +85,7 @@ class TestPluginManager(unittest.TestCase):
             _version_ = 1
 
             _dependencies_ = [mock_dependency]
+
             def __init__(self):
                 PluginManager().register_plugin(self)
 
@@ -85,10 +94,10 @@ class TestPluginManager(unittest.TestCase):
         bp = basePlugin()
         mock_dependency.verify.assert_called_once()
 
-
     def test_verify_plugin_ok(self):
         mock_dependency = MagicMock()
         mock_dependency.verify = MagicMock()
+
         class basePlugin(BasePlugin):
             _name_ = "name"
             _description_ = "desc"
@@ -96,6 +105,7 @@ class TestPluginManager(unittest.TestCase):
             _version_ = 1
 
             _dependencies_ = [mock_dependency]
+
             def __init__(self):
                 PluginManager().register_plugin(self)
 
@@ -111,6 +121,7 @@ class TestPluginManager(unittest.TestCase):
     def test_verify_plugin_raises(self):
         mock_dependency = MagicMock()
         mock_dependency.verify = MagicMock()
+
         class basePlugin(BasePlugin):
             _name_ = "name"
             _description_ = "desc"
@@ -118,6 +129,7 @@ class TestPluginManager(unittest.TestCase):
             _version_ = 1
 
             _dependencies_ = [mock_dependency]
+
             def __init__(self):
                 PluginManager().register_plugin(self)
 
