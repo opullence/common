@@ -4,6 +4,32 @@ from opulence.common.facts import BaseFact
 from opulence.common.fields import BaseField, IntegerField, StringField
 
 
+class Person(BaseFact):
+    _name_ = "superplugin"
+    _description_ = "desc"
+    _author_ = "nobody"
+    _version_ = 42
+
+    def setup(self):
+        self.a = StringField(mandatory=True)
+        self.b = IntegerField()
+
+
+class TestFactSerialisation(unittest.TestCase):
+    def test_serialisation_01(self):
+        p = Person(a="a", b=2)
+        p2 = Person(a="a", b=2)
+
+        new_p = Person.from_json(p.to_json())
+        new_p2 = Person.from_json(p2.to_json())
+        self.assertEqual(p, new_p)
+        self.assertEqual(new_p, new_p2)
+        for (a, b), (c, d) in zip(p.get_fields().items(), new_p.get_fields().items()):
+            self.assertTrue(a == c)
+            self.assertTrue(b == d)
+        self.assertEqual(new_p.to_json(), p.to_json())
+
+
 class TestFact(unittest.TestCase):
     def test_simple_fact(self):
         class Person(BaseFact):
@@ -28,6 +54,62 @@ class TestFact(unittest.TestCase):
         self.assertIsNone(fact.a.value)
         self.assertIsNone(fact.a.default)
         self.assertFalse(fact.a.mandatory)
+
+    def test_valid_fact_0(self):
+        class Person(BaseFact):
+            _name_ = "superplugin"
+            _description_ = "desc"
+            _author_ = "nobody"
+            _version_ = 42
+
+            def setup(self):
+                self.a = StringField(mandatory=True)
+                self.b = StringField()
+
+        fact = Person(a="yes")
+        self.assertTrue(fact.is_valid())
+
+    def test_valid_fact_1(self):
+        class Person(BaseFact):
+            _name_ = "superplugin"
+            _description_ = "desc"
+            _author_ = "nobody"
+            _version_ = 42
+
+            def setup(self):
+                self.a = StringField(mandatory=True, default="aze")
+                self.b = StringField()
+
+        fact = Person(a="yes")
+        self.assertTrue(fact.is_valid())
+
+    def test_invalid_fact_0(self):
+        class Person(BaseFact):
+            _name_ = "superplugin"
+            _description_ = "desc"
+            _author_ = "nobody"
+            _version_ = 42
+
+            def setup(self):
+                self.a = StringField(mandatory=True, default="def")
+                self.b = StringField()
+
+        fact = Person()
+        self.assertFalse(fact.is_valid())
+
+    def test_invalid_fact__1(self):
+        class Person(BaseFact):
+            _name_ = "superplugin"
+            _description_ = "desc"
+            _author_ = "nobody"
+            _version_ = 42
+
+            def setup(self):
+                self.a = StringField(mandatory=True, default="def")
+                self.b = StringField()
+
+        fact = Person(a="def")
+        self.assertFalse(fact.is_valid())
 
     def test_complex_fact(self):
         class Person(BaseFact):
@@ -98,8 +180,6 @@ class TestFact(unittest.TestCase):
         c = Person()
         self.assertEqual(hash(a), hash(b), hash(c))
 
-
-
     def test_facts_hash_invalid_plugin(self):
         class Person(BaseFact):
             _name_ = "superplugin"
@@ -124,12 +204,12 @@ class TestFact(unittest.TestCase):
         aa = Person()
         b = Person(a="joe")
         c = Person(a="joe")
+
         self.assertNotEqual(hash(a), hash(b))
-        self.assertNotEqual(hash(a), hash(aa))
-        self.assertNotEqual(hash(b), hash(c))
+        self.assertEqual(hash(a), hash(aa))
+        self.assertEqual(hash(b), hash(c))
 
         self.assertEqual(a.plugin_category, "BaseFact")
-
 
     def test_facts_hash_comparison(self):
         class Person(BaseFact):
@@ -144,6 +224,7 @@ class TestFact(unittest.TestCase):
         b = Person(a="joe")
         c = Person(a="job")
         self.assertEqual(hash(a), hash(b))
+
         self.assertNotEqual(hash(a), hash(c))
         self.assertNotEqual(hash(b), hash(c))
 
@@ -180,9 +261,101 @@ class TestFact(unittest.TestCase):
                 self.a = StringField(default="42")
                 self.b = IntegerField()
                 self.c = IntegerField(default=424242)
+
         a = Person(a="42", c=424242)
 
         infos = a.get_info()
         self.assertTrue("plugin_data" in infos)
-        self.assertTrue({"name": "a", "mandatory": False, "value": "42"} in infos["fields"])
-        self.assertTrue({'name': 'b', 'mandatory': False, 'value': None} in infos["fields"])
+
+        should_be = {
+            "a": {
+                "__class__": "StringField",
+                "__module__": "opulence.common.fields.fields",
+                "value": "42",
+                "default": "42",
+                "mandatory": False,
+            },
+            "b": {
+                "__class__": "IntegerField",
+                "__module__": "opulence.common.fields.fields",
+                "value": None,
+                "default": None,
+                "mandatory": False,
+            },
+            "c": {
+                "__class__": "IntegerField",
+                "__module__": "opulence.common.fields.fields",
+                "value": 424242,
+                "default": 424242,
+                "mandatory": False,
+            },
+        }
+
+        self.assertEqual(should_be, infos["fields"])
+
+    def test_fact_additional_fields_equal(self):
+        class Person(BaseFact):
+            _name_ = "superplugin"
+            _description_ = "desc"
+            _author_ = "nobody"
+            _version_ = 42
+
+            def setup(self):
+                self.a = StringField()
+
+        factA = Person(a="Hello", additional="world")
+        factB = Person(a="Hello", additional="world")
+
+        self.assertTrue(factA.is_valid())
+        self.assertEqual(factA, factB)
+        self.assertEqual(hash(factA), hash(factB))
+
+    def test_fact_additional_fields_not_equal(self):
+        class Person(BaseFact):
+            _name_ = "superplugin"
+            _description_ = "desc"
+            _author_ = "nobody"
+            _version_ = 42
+
+            def setup(self):
+                self.a = StringField()
+
+        factA = Person(a="Hello", additional="world")
+        factB = Person(a="Hello", additional="hello")
+
+        self.assertTrue(factA.is_valid())
+        self.assertNotEqual(factA, factB)
+        self.assertNotEqual(hash(factA), hash(factB))
+
+    def test_fact_additional_fields_not_equal_2(self):
+        class Person(BaseFact):
+            _name_ = "superplugin"
+            _description_ = "desc"
+            _author_ = "nobody"
+            _version_ = 42
+
+            def setup(self):
+                self.a = StringField()
+
+        factA = Person(a="Hello", additional="world")
+        factB = Person(a="Hello", hello="world")
+
+        self.assertTrue(factA.is_valid())
+        self.assertTrue(factB.is_valid())
+
+        self.assertNotEqual(factA, factB)
+        self.assertNotEqual(hash(factA), hash(factB))
+
+    def test_fact_compare_to_dummy(self):
+        class Person(BaseFact):
+            _name_ = "superplugin"
+            _description_ = "desc"
+            _author_ = "nobody"
+            _version_ = 42
+
+            def setup(self):
+                self.a = StringField()
+
+        fact = Person(a="Hello", additional="world")
+
+        self.assertFalse(fact == 42)

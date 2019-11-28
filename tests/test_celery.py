@@ -1,12 +1,12 @@
 import unittest
-from mock import MagicMock, patch
 
 from celery.exceptions import TimeoutError
-
+from mock import MagicMock, patch
 
 from opulence.common.celery.exceptions import TaskError, TaskTimeoutError
-from opulence.common.celery.utils import sync_call, async_call
 from opulence.common.celery.taskRouter import TaskRouter
+from opulence.common.celery.utils import async_call, sync_call
+
 
 class TestCeleryTaskRouter(unittest.TestCase):
     def test_simple_router(self):
@@ -20,6 +20,7 @@ class TestCeleryTaskRouter(unittest.TestCase):
         res = tr.route_for_task("app")
         expected = "{'queue': 'default'}"
         self.assertEqual(str(res), expected)
+
 
 class TestCeleryUtils(unittest.TestCase):
     def test_sync_call_raises(self):
@@ -37,12 +38,11 @@ class TestCeleryUtils(unittest.TestCase):
         expected = ("this", "is", "sparta")
         args = (("%s" % (path),), {"karg": karg})
         app.send_task().get.return_value = expected
-        
+
         result = sync_call(app, path, timeout, karg=karg)
         self.assertEqual(result, expected)
         self.assertEqual(app.send_task.call_args, args)
-        self.assertEqual(app.send_task().get.call_args,
-                         (tuple(), {"timeout": timeout}))
+        self.assertEqual(app.send_task().get.call_args, (tuple(), {"timeout": timeout}))
 
     def test004_async_call_ok(self):
         app = MagicMock()

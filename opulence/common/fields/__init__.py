@@ -1,4 +1,4 @@
 from .baseField import BaseField
-from .fields import IntegerField, StringField
+from .fields import DynamicField, IntegerField, StringField
 
-__all__ = [BaseField, StringField, IntegerField]
+__all__ = [BaseField, StringField, IntegerField, DynamicField]

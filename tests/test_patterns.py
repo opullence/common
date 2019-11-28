@@ -1,6 +1,6 @@
 import unittest
 
-from opulence.common.patterns import Composite, Singleton, JsonSerializable
+from opulence.common.patterns import Composite, JsonSerializable, Singleton
 
 
 class Foobar(JsonSerializable):
@@ -8,9 +8,9 @@ class Foobar(JsonSerializable):
     b = "foo"
     c = {"bar": "baz", "foo": 42}
 
-class TestJsonSerializable(unittest.TestCase):
 
-    def test_json_serialization(self): 
+class TestJsonSerializable(unittest.TestCase):
+    def test_json_serialization(self):
         foo = Foobar()
         foo_json = foo.to_json()
         foo_back = Foobar.from_json(foo_json)
@@ -18,12 +18,13 @@ class TestJsonSerializable(unittest.TestCase):
         self.assertEqual(foo.b, foo_back.b)
         self.assertEqual(foo.c, foo_back.c)
         self.assertEqual(foo.__class__.__name__, foo_back.__class__.__name__)
- 
+
 
 class TestSingleton(unittest.TestCase):
     def test_simple_singleton(self):
         class toto(Singleton):
             pass
+
         a = toto()
         b = toto()
         self.assertEqual(id(a), id(b))
@@ -47,9 +48,6 @@ class TestComposite(unittest.TestCase):
         self.assertEqual(c.elements, expected)
 
     def test_complex_composite(self):
-        c = Composite(
-            (1), (42, "bb"), ({
-                "One": 1}, "cc"), "d", 0.4242, [
-                "one", 2, 3.0])
+        c = Composite((1), (42, "bb"), ({"One": 1}, "cc"), "d", 0.4242, ["one", 2, 3.0])
         expected = [1, 42, "bb", {"One": 1}, "cc", "d", 0.4242, "one", 2, 3.0]
         self.assertEqual(c.elements, expected)

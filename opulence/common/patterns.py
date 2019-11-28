@@ -5,8 +5,13 @@ from .utils import is_list
 
 class JsonSerializable:
     def to_json(self):
+        dict_whithout_private = {
+            key: value
+            for key, value in self.__dict__.items()
+            if not key.startswith("_")
+        }
         obj_dict = {"__class__": self.__class__.__name__, "__module__": self.__module__}
-        obj_dict.update(self.__dict__)
+        obj_dict.update(dict_whithout_private)
         return obj_dict
 
     @staticmethod
