@@ -1,4 +1,4 @@
-kombu==4.6.5
+kombu>=4.6.5
 PyYAML==5.1.2
 celery==4.3.0
 uuid==1.30
