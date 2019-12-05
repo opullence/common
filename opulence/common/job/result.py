@@ -48,7 +48,7 @@ class Result(JsonSerializable):
         status=StatusCode.undefined,
         identifier=None,
         clock=None,
-        collector_data=None
+        collector_data=None,
     ):
         if identifier is None:
             self.identifier = generate_uuid()
