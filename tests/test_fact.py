@@ -19,7 +19,6 @@ class TestFactSerialisation(unittest.TestCase):
     def test_serialisation_01(self):
         p = Person(a="a", b=2)
         p2 = Person(a="a", b=2)
-
         new_p = Person.from_json(p.to_json())
         new_p2 = Person.from_json(p2.to_json())
         self.assertEqual(p, new_p)
