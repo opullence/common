@@ -1,6 +1,8 @@
 import os
 import subprocess
 
+from opulence.common.patterns import Singleton
+
 if (
     subprocess.call(["which", "gpg2"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     == 0
@@ -15,7 +17,7 @@ else:
     raise Exception("Could not find GPG")
 
 
-class PasswordStore:
+class Store(Singleton):
     def __init__(self, path=None, git_dir=None):
         if path is None:
             path = os.path.join(os.getenv("HOME"), ".password-store")
@@ -56,6 +58,7 @@ class PasswordStore:
         gpg.wait()
 
         if gpg.returncode == 0:
-            return gpg.stdout.read().decode()
+            res = gpg.stdout.read().decode()
+            return res[:-1]
         else:
             raise Exception("Couldn't decrypt {}".format(path))
