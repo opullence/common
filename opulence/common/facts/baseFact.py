@@ -31,6 +31,10 @@ class BaseFact(BasePlugin, JsonSerializable):
         pass
 
     @property
+    def plugin_canonical_name(self):
+        return ".".join(["opulence.facts", self.__class__.__name__])
+
+    @property
     def plugin_category(self):
         return BaseFact.__name__
 
