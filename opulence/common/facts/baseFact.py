@@ -32,7 +32,7 @@ class BaseFact(BasePlugin, JsonSerializable):
 
     @property
     def plugin_canonical_name(self):
-        return "::".join(["fact"] + self.__module__[2:-1])
+        return "::".join(["fact"] + self.__module__.split(".")[2:-1])
 
     @property
     def plugin_category(self):
