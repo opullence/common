@@ -32,11 +32,11 @@ class BaseFact(BasePlugin, JsonSerializable):
 
     @property
     def plugin_canonical_name(self):
-        return "::".join(["fact"] + self.__module__.split(".")[2:-1])
+        return ".".join(["opulence.facts", self.__class__.__name__])
 
     @property
     def plugin_category(self):
-        return "::".join()
+        return "::".join(["fact"] + self.__module__.split(".")[2:-1])
 
     def is_valid(self):
         for _, f in self.get_fields().items():
