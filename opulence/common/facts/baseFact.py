@@ -36,7 +36,7 @@ class BaseFact(BasePlugin, JsonSerializable):
 
     @property
     def plugin_category(self):
-        return BaseFact.__name__
+        return self.__module__
 
     def is_valid(self):
         for _, f in self.get_fields().items():
