@@ -102,8 +102,30 @@ class Result(JsonSerializable):
                 "error": error,
             }
 
-    def to_json(self):
+    def get_info(self):
+        input = self.input.get()
+        input_json = []
+        if is_list(input):
+            input_json = [i.get_info() for i in input]
+        elif input is not None:
+            input_json = input.get_info()
 
+        output_json = []
+        if self.output:
+            output_json = [out.get_info() for out in self.output]
+
+        obj_dict = {
+            "input": input_json,
+            "output": output_json,
+            "clock": self.clock.to_json(),
+            "identifier": self.identifier.hex,
+            "collector": self.collector_data,
+            "status": (int(self.status["status"]), self.status["error"])
+        }
+        return obj_dict
+
+
+    def to_json(self):
         input = self.input.get()
         input_json = []
         if is_list(input):
