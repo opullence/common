@@ -62,7 +62,7 @@ class BaseFact(BasePlugin, JsonSerializable):
         }
 
     def get_info(self):
-        data = {"fields": self.get_fields(json=True)}
+        data = {"fields": self.get_fields(json=True), "summary": self.summary}
         return {**super().get_info(), **data}
 
     def to_json(self):
