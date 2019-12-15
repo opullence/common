@@ -14,6 +14,7 @@ class BaseFact(BasePlugin, JsonSerializable):
                     self.__dict__[key].value = value
             else:
                 setattr(self, key, DynamicField(value=value))
+        self.summary = self.get_summary()        
         super().__init__()
 
     def __hash__(self):
@@ -30,13 +31,16 @@ class BaseFact(BasePlugin, JsonSerializable):
     def setup(self):
         pass
 
+    def get_summary(self):
+        return ""
+
     @property
     def plugin_canonical_name(self):
         return ".".join(["opulence.facts", self.__class__.__name__])
 
     @property
     def plugin_category(self):
-        return "::".join(["fact"] + self.__module__.split(".")[2:-1])
+        return ".".join(["fact"] + self.__module__.split(".")[2:-1])
 
     def is_valid(self):
         for _, f in self.get_fields().items():

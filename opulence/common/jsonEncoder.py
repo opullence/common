@@ -7,7 +7,6 @@ from .fields import BaseField
 from .job import Result
 from .utils import datetime_to_str, str_to_datetime
 
-
 class encode(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, Result):
