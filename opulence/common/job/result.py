@@ -120,10 +120,9 @@ class Result(JsonSerializable):
             "clock": self.clock.to_json(),
             "identifier": self.identifier.hex,
             "collector": self.collector_data,
-            "status": (int(self.status["status"]), self.status["error"])
+            "status": (int(self.status["status"]), self.status["error"]),
         }
         return obj_dict
-
 
     def to_json(self):
         input = self.input.get()

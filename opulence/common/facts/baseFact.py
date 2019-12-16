@@ -14,7 +14,7 @@ class BaseFact(BasePlugin, JsonSerializable):
                     self.__dict__[key].value = value
             else:
                 setattr(self, key, DynamicField(value=value))
-        self.summary = self.get_summary()        
+        self.summary = self.get_summary()
         super().__init__()
 
     def __hash__(self):
