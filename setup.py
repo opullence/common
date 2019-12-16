@@ -8,7 +8,7 @@ with open("requirements/production.txt") as f:
 
 setup(
     name="opulence.common",
-    version="0.0.7",
+    version="1.0.0",
     description="Common tools",
     long_description=readme,
     author="Opulence",
