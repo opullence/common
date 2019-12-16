@@ -208,7 +208,7 @@ class TestFact(unittest.TestCase):
         self.assertEqual(hash(a), hash(aa))
         self.assertEqual(hash(b), hash(c))
 
-        self.assertEqual(a.plugin_category, "BaseFact")
+        self.assertEqual(a.plugin_category, "fact")
 
     def test_facts_hash_comparison(self):
         class Person(BaseFact):

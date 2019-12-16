@@ -11,5 +11,10 @@ class IntegerField(BaseField):
         return int(value)
 
 
+class FloatField(BaseField):
+    def cast_value(self, value):
+        return float(value)
+
+
 class DynamicField(BaseField):
     pass

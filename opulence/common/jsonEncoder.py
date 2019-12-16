@@ -1,5 +1,6 @@
 import json
 from datetime import datetime
+from uuid import UUID
 
 from .facts import BaseFact
 from .fields import BaseField
@@ -17,6 +18,8 @@ class encode(json.JSONEncoder):
             return {"__type__": "__basefield__", "field": obj.to_json()}
         elif isinstance(obj, datetime):
             return {"__type__": "__datetime__", "epoch": datetime_to_str(obj)}
+        elif isinstance(obj, UUID):
+            return {"__type__": "__uuid__", "uuid": obj.hex}
         return json.JSONEncoder.default(self, obj)  # pragma: no cover
 
 
@@ -30,6 +33,9 @@ def decode(obj):
             return BaseField.from_json(obj["field"])
         elif obj["__type__"] == "__datetime__":
             return str_to_datetime(obj["epoch"])
+        elif obj["__type__"] == "__uuid__":
+            return UUID(obj["uuid"])
+
     return obj
 
 
