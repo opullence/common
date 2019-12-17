@@ -18,23 +18,10 @@ else:
 
 
 class Store(Singleton):
-    def __init__(self, path=None, git_dir=None):
+    def __init__(self, path=None):
         if path is None:
             path = os.path.join(os.getenv("HOME"), ".password-store")
         self.password_store_path = os.path.abspath(path)
-        self.gpg_id = self._get_gpg_id(self.password_store_path)
-
-        git_dir = git_dir or os.path.join(self.password_store_path, ".git")
-        self.uses_git = os.path.isdir(git_dir)
-        if self.uses_git:
-            self.git_dir = git_dir
-
-    def _get_gpg_id(self, file_path):
-        gpg_id_path = os.path.join(file_path, ".gpg-id")
-        if os.path.isfile(gpg_id_path):
-            with open(gpg_id_path, "r") as gpg_id_file:
-                return gpg_id_file.read().strip()
-        raise Exception("could not find .gpg-id file")
 
     def get_passwords_list(self):
         passwords = []
@@ -61,4 +48,4 @@ class Store(Singleton):
             res = gpg.stdout.read().decode()
             return res[:-1]
         else:
-            raise Exception("Couldn't decrypt {}".format(path))
+            return None

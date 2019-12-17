@@ -148,8 +148,11 @@ class PluginManager(Singleton):
             module = import_module(plugin)
         except ModuleNotFoundError as err:
             print("Module not found ({}): {}".format(plugin, err))
+        except Exception as err:
+            print("Import module failed: {}".format(err))
         else:
             return module
+        return None
 
     def discover(self, path=None):
         if path is None:
@@ -161,7 +164,8 @@ class PluginManager(Singleton):
                 module = self._import_module(pkg_name)
             else:
                 module = sys.modules[pkg_name]
-            self._load_plugin(module, path)
+            if module is not None:
+                self._load_plugin(module, path)
             if ispkg:
                 self.discover(pkg_name)
 
