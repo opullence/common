@@ -14,6 +14,9 @@ __pycache__/
 # emacs stuff
 *.el
 
+# vscode ;)
+.vscode
+
 # Distribution / packaging
 .Python
 build/
@@ -110,3 +113,4 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
